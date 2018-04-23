@@ -1,0 +1,20 @@
+{
+    "name": "xmlscript/mp",
+    "description": "mp",
+    "require": {
+        "xmlscript/http": "dev-master"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "xmlscript",
+            "email": "xmlscript@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+      "psr-4": {
+        "mp\\": ""
+      }
+    }
+}
