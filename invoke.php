@@ -2,13 +2,6 @@
 
 use http\request;
 
-/**
- * 主动调用公众号API，原本都是零碎的Restful，现在提取到各个方法，方便二次封装提供给自家app使用
- * 也就是说，本来app能自己构造各种参数去发起独立请求，但现在兵合一处，集中验证，方便管理
- *
- * @todo 这些方法应该想办法缓存结果，免得app频繁调用引起超额限制。服务端cache + 403 + Expires 三道防线
- * @todo 开发者用静态类的方式固化appid，secret和token，ticket
- */
 class invoke{
 
   private $appid,$secret,$host;
