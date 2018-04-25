@@ -46,9 +46,11 @@ class invoke{
     $file= $this->dir.DIRECTORY_SEPARATOR.'.'.$this->appid.'.'.$filename;
     $iv = substr($this->appid,-16);
 
-    file_put_contents($file, $s=openssl_encrypt($result->access_token,self::CIPHER,$this->secret,OPENSSL_RAW_DATA,$iv)) or error_log("无法写入$file");
 
-    throw new \Error($file.' '.$s);
+    file_put_contents($file, openssl_encrypt($result->access_token,self::CIPHER,$this->secret,OPENSSL_RAW_DATA,$iv)) or error_log("无法写入$file");
+
+
+    throw new \Error($file.' '.function_exists('openssl_encrypt')?'y':'n');
 
     //throw new \Error($this->load($filename,7200));
 
