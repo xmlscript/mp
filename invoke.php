@@ -220,8 +220,9 @@ class invoke{
 
 
   function w():array{#
-    $response = request::url($this->host.'/cgi-bin/customservice/getonlinekflist')
+    return request::url($this->host.'/cgi-bin/customservice/getonlinekflist')
       ->fetch(['access_token'=>$this->token()])
+      ->json();
   }
 
 
