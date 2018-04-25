@@ -68,8 +68,7 @@ class invoke{
       return $token;
     else{
       $result = request::url($this->host.'/cgi-bin/token')
-        ->query(['grant_type'=>'client_credential','appid'=>$this->appid,'secret'=>$this->secret])
-        ->GET()
+        ->fetch(['grant_type'=>'client_credential','appid'=>$this->appid,'secret'=>$this->secret])
         ->json();
       if(isset($result->access_token)){
         return $this->save(__FUNCTION__,$result->access_token);
@@ -88,8 +87,7 @@ class invoke{
       return $ticket;
     else{
       $result = request::url($this->host.'/cgi-bin/ticket/getticket')
-        ->query(['access_token'=>$this->token()])
-        ->GET()
+        ->fecth(['access_token'=>$this->token()])
         ->json();
       if(isset($result->ticket)){
         return $this->save(__FUNCTION__,$result->ticket);
@@ -109,8 +107,7 @@ class invoke{
       return $ticket;
     else{
       $result = request::url($this->host.'/cgi-bin/ticket/getticket')
-        ->query(['access_token'=>$this->token(),'type'=>'wx_card'])
-        ->GET()
+        ->fetch(['access_token'=>$this->token(),'type'=>'wx_card'])
         ->json();
       if(isset($result->ticket)){
         return $this->save(__FUNCTION__, $result->ticket);
@@ -136,8 +133,7 @@ class invoke{
       return $access_token;
     else{
       $result = request::url($this->host.'/sns/oauth2/access_token')
-        ->query(['appid'=>$this->appid,'secret'=>$this->secret,'code'=>$code,'grant_type'=>'authorization_code'])
-        ->GET()
+        ->fetch(['appid'=>$this->appid,'secret'=>$this->secret,'code'=>$code,'grant_type'=>'authorization_code'])
         ->json();
       if(isset($result->access_token))
         return $this->save(__FUNCTION__, $result->access_token);
@@ -174,8 +170,7 @@ class invoke{
   function userinfo(string $code, string $openid, string $lang='zh_CN'):array{
     $access_token = $this->access_token($code);
     $response = request::url($this->host.'/sns/userinfo')
-      ->query(['access_token'=>$access_token,'openid'=>$openid,'lang'=>$lang])
-      ->GET()
+      ->fetch(['access_token'=>$access_token,'openid'=>$openid,'lang'=>$lang])
       ->json();
 
     if(isset($response->errcode,$response->errmsg))
@@ -226,23 +221,21 @@ class invoke{
 
   function w():array{#
     $response = request::url($this->host.'/cgi-bin/customservice/getonlinekflist')
-      ->query(['access_token'=>$this->token()])
-      ->GET();
+      ->fetch(['access_token'=>$this->token()])
   }
 
 
   //FIXME: 封装的不彻底
   function whoami(string $openid){
     return request::url($this->host.'/cgi-bin/user/info')
-      ->query(['access_token'=>$this->token(),'openid'=>$openid,'lang'=>'zh_CN'])
-      ->GET()->json()['nickname'];
+      ->qufetchery(['access_token'=>$this->token(),'openid'=>$openid,'lang'=>'zh_CN'])
+      ->json()['nickname'];
   }
 
 
   function getkflist():array{
     return request::url($this->host.'/cgi-bin/customservice/getkflist')
-      ->query(['access_token'=>$this->token()])
-      ->GET()
+      ->qufetchery(['access_token'=>$this->token()])
       ->json();
   }
 
@@ -253,8 +246,7 @@ class invoke{
    */
   function template():array{
     return request::url($this->host.'/cgi-bin/template/get_all_private_template')
-      ->query(['access_token'=>$this->token()])
-      ->GET()
+      ->fetch(['access_token'=>$this->token()])
       ->json();
   }
 
@@ -384,8 +376,7 @@ class invoke{
     if(is_null($menu)){
 
       $result = request::url($this->host.'/cgi-bin/menu/get')
-        ->query(['access_token'=>$this->token()])
-        ->GET()
+        ->fetch(['access_token'=>$this->token()])
         ->json();
       if($result['errcode'])
         throw new \Exception($result['errmsg'],$result['errcode']);
@@ -428,8 +419,7 @@ class invoke{
   function ip():array{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140187
     $result = request::url($this->host.'/cgi-bin/getcallbackip')
-      ->query(['access_token'=>$this->token()])
-      ->GET()
+      ->fetch(['access_token'=>$this->token()])
       ->json();
     if(isset($result['errcode'])&&$result['errcode'])
       throw new \Exception($result['errmsg'],$result['errcode']);
