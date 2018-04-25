@@ -5,7 +5,7 @@ use http\request;
 class invoke{
 
   private $appid,$secret,$host;
-  private const CIPHER = 'AES-256-CBC';
+  private const CIPHER = 'aes-256-cbc';
   
   final function __construct(string $appid, string $secret, string $host='https://api.weixin.qq.com'){
     $this->appid = $appid;
@@ -32,7 +32,7 @@ class invoke{
 
     if(
       file_exists($file) &&
-      time()-filemtime($file)<$expire && //文档说新旧token可以在临界点共存5分钟(300秒) 本机时间
+      time()-filemtime($file)<$expire &&
       $token = openssl_decrypt(file_get_contents($file),self::CIPHER,$this->secret,OPENSSL_RAW_DATA,$iv)
     )
       return $token;
@@ -47,8 +47,6 @@ class invoke{
     $iv = substr($this->appid,-16);
 
     $b = file_put_contents($file, openssl_encrypt($result->access_token,self::CIPHER,$this->secret,OPENSSL_RAW_DATA,$iv)) or error_log("无法写入$file");
-
-    throw new \Error(($b?'y':'n').' '.$this->load($filename,7200));
 
     return $str;
 
