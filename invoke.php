@@ -21,6 +21,10 @@ class invoke{
     $this->dir = session_save_path();
   }
 
+  final function appid():string{
+    return $this->appid;
+  }
+
 
   final static function construct(string $appid, string $secret, string $host='https://api.weixin.qq.com'):self{
     return new self($appid, $secret, $host);
