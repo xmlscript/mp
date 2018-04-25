@@ -230,8 +230,8 @@ class invoke{
   //FIXME: 封装的不彻底
   function whoami(string $openid){
     return request::url($this->host.'/cgi-bin/user/info')
-      ->query(['access_token'=>$this->token(),'lang'=>'zh_CN','openid'=>$openid])
-      ->GET();
+      ->query(['access_token'=>$this->token(),'openid'=>$openid,'lang'=>'zh_CN'])
+      ->GET()->json()['nickname'];
   }
 
 
