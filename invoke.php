@@ -68,7 +68,7 @@ class invoke{
       return $token;
     else{
       $result = request::url($this->host.'/cgi-bin/token')
-        ->query(['grant_type'=>'client_platform_type','appid'=>$this->appid,'secret'=>$this->secret])
+        ->query(['grant_type'=>'client_credential','appid'=>$this->appid,'secret'=>$this->secret])
         ->GET()
         ->json();
       if(isset($result->access_token)){
