@@ -50,7 +50,7 @@ class invoke{
 
     throw new \Error($file.' '.openssl_encrypt($result->access_token,self::CIPHER,$this->secret,OPENSSL_RAW_DATA,$iv));
 
-    throw new \Error($this->load($filename,7200));
+    //throw new \Error($this->load($filename,7200));
 
     return $str;
 
