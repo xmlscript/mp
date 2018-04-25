@@ -223,7 +223,7 @@ class invoke{
   function whoami(string $openid){
     return request::url($this->host.'/cgi-bin/user/info')
       ->fetch(['access_token'=>$this->token(),'openid'=>$openid,'lang'=>'zh_CN'])
-      ->json()['nickname'];
+      ->json();
   }
 
 
