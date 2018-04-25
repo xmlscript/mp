@@ -11,7 +11,8 @@ class invoke{
     $this->appid = $appid;
     $this->secret = $secret;
     $this->host = $host;
-    $this->dir = session_save_path();
+    $this->dir = session_save_path();//FIXME 仍然在/tmp之下呢？
+    $this->dir = getcwd();
   }
 
   final function appid():string{
