@@ -229,14 +229,14 @@ class invoke{
   //FIXME: 封装的不彻底
   function whoami(string $openid){
     return request::url($this->host.'/cgi-bin/user/info')
-      ->query(['access_token'=>$this->token(),'openid'=>$openid,'lang'=>'zh_CN'])
+      ->fetch(['access_token'=>$this->token(),'openid'=>$openid,'lang'=>'zh_CN'])
       ->json()['nickname'];
   }
 
 
   function getkflist():array{
     return request::url($this->host.'/cgi-bin/customservice/getkflist')
-      ->query(['access_token'=>$this->token()])
+      ->fetch(['access_token'=>$this->token()])
       ->json();
   }
 
