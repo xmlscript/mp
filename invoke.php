@@ -37,7 +37,7 @@ class invoke{
     )
       return $token;
     else
-      is_writable($file) && unlink($file);
+      return (unset)(is_writable($file) && unlink($file));
   }
 
 
