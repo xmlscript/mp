@@ -48,7 +48,7 @@ class invoke{
 
     file_put_contents($file, openssl_encrypt($result->access_token,self::CIPHER,$this->secret,OPENSSL_RAW_DATA,$iv)) or error_log("无法写入$file");
 
-    throw new \Error($file.' '.$this->load($filename));
+    throw new \Error($file.' '.$this->load($filename,7200));
 
     return $str;
 
