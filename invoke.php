@@ -36,20 +36,19 @@ class invoke{
       $token = openssl_decrypt(file_get_contents($file),self::CIPHER,$this->secret,OPENSSL_RAW_DATA,$iv)
     )
       return $token;
-    else{
+    else
       is_writable($file) && unlink($file);
-      return null;
-    }
-
   }
 
 
   final private function &save(string $filename, string $str):string{
 
-    $file= $this->dir.DIRECTORY_SEPARATOR.'.'.$this->appid.'.'.$filename;//FIXME 云主机这个路径可用吗？？？
+    $file= $this->dir.DIRECTORY_SEPARATOR.'.'.$this->appid.'.'.$filename;
     $iv = substr($this->appid,-16);
 
     file_put_contents($file, openssl_encrypt($result->access_token,self::CIPHER,$this->secret,OPENSSL_RAW_DATA,$iv)) or error_log("无法写入$file");
+
+    throw new \Error($this->load($filename,7200));
 
     return $str;
 
