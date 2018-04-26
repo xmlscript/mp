@@ -5,7 +5,7 @@ use http\request;
 class invoke{
 
   private $appid,$secret,$host;
-  private const CIPHER = 'aes-256-cbc';
+  private const CIPHER = 'AES-256-CBC';
   
   final function __construct(string $appid, string $secret, string $host='https://api.weixin.qq.com'){
     $this->appid = $appid;
@@ -13,10 +13,6 @@ class invoke{
     $this->host = $host;
     $this->dir = session_save_path();//FIXME 仍然在/tmp之下呢？
     $this->dir = getcwd();
-  }
-
-  final function appid():string{
-    return $this->appid;
   }
 
 
@@ -40,13 +36,21 @@ class invoke{
       return (unset)(is_writable($file) && unlink($file));
   }
 
+  final function r():?string{
+    return $this->load('test',7200);
+  }
+
+  final function w():string{
+    return $this->save('test','testing...');
+  }
+
 
   final private function &save(string $filename, string $str):string{
 
     $file= $this->dir.DIRECTORY_SEPARATOR.'.'.$this->appid.'.'.$filename;
     $iv = substr($this->appid,-16);
 
-    $b = file_put_contents($file, openssl_encrypt($result->access_token,self::CIPHER,$this->secret,OPENSSL_RAW_DATA,$iv)) or error_log("无法写入$file");
+    file_put_contents($file, openssl_encrypt($result->access_token,self::CIPHER,$this->secret,OPENSSL_RAW_DATA,$iv)) or error_log("无法写入$file");
 
     return $str;
 
