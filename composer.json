@@ -2,7 +2,8 @@
     "name": "xmlscript/mp",
     "description": "mp",
     "require": {
-        "xmlscript/http": "dev-master"
+        "xmlscript/http": "dev-master",
+        "xmlscript/tmp": "dev-master"
     },
     "license": "MIT",
     "authors": [

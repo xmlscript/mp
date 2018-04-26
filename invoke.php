@@ -1,6 +1,7 @@
 <?php namespace mp; // vim: se fdm=marker:
 
 use http\request;
+use tmp\cache;
 
 class invoke{
 
@@ -21,52 +22,16 @@ class invoke{
   }
 
 
-  final private function load(string $filename, int $expire):?string{
-
-    $file= $this->dir.DIRECTORY_SEPARATOR.'.'.$this->appid.'.'.$filename;
-    $iv = str_pad(substr($this->appid,-16),16);
-
-    if(
-      file_exists($file) &&
-      time()-filemtime($file)<$expire &&
-      $token = openssl_decrypt(file_get_contents($file),self::CIPHER,$this->secret,OPENSSL_RAW_DATA,$iv)
-    )
-      return $token;
-    else
-      return (unset)(is_writable($file) && unlink($file));
-  }
-
-  final function read():?string{
-    return $this->load('test',7200);
-  }
-
-  final function write():string{
-    return $this->save('test','testing...');
-  }
-
-
-  final private function save(string $filename, string $str):string{
-
-    $file= $this->dir.DIRECTORY_SEPARATOR.'.'.$this->appid.'.'.$filename;
-    $iv = str_pad(substr($this->appid,-16),16);
-
-    file_put_contents($file, openssl_encrypt($str,self::CIPHER,$this->secret,OPENSSL_RAW_DATA,$iv)) or error_log("无法写入$file");
-
-    return $str;
-
-  }
-
-
   final function token():string{
 
-    if($token = $this->load(__FUNCTION__, 7200))
+    if($token = (string)new cache($this->appid.__FUNCTION__,$this->secret,7200))
       return $token;
     else{
       $result = request::url($this->host.'/cgi-bin/token')
         ->fetch(['grant_type'=>'client_credential','appid'=>$this->appid,'secret'=>$this->secret])
         ->json();
       if(isset($result->access_token)){
-        return $this->save(__FUNCTION__,$result->access_token);
+        return (new cache($this->appid.__FUNCTION__,$this->secret))($result->access_token);
       }else
         throw new \Exception($result->errmsg, $result->errcode);
     }
@@ -78,14 +43,14 @@ class invoke{
    * ticket应该在服务端缓存一份，7200秒(两小时)有效期
    */
   final function jsapi_ticket():string{
-    if($ticket = $this->load(__FUNCTION__,7200))
+    if($ticket = (string)new cache($this->appid.__FUNCTION__,$this->secret,7200))
       return $ticket;
     else{
       $result = request::url($this->host.'/cgi-bin/ticket/getticket')
         ->fecth(['access_token'=>$this->token()])
         ->json();
       if(isset($result->ticket)){
-        return $this->save(__FUNCTION__,$result->ticket);
+        return (new cache($this->appid.__FUNCTION__,$this->secret))($result->ticket);
       }else
         throw new \Exception($result->errmsg, $result->errcode);
     }
@@ -98,14 +63,14 @@ class invoke{
    * ticket应该在服务端缓存一份，7200秒(两小时)有效期
    */
   final function wxcard_ticket():string{
-    if($ticket = $this->load(__FUNTION__,7200))
+    if($ticket = (string)new cache($this->appid.__FUNCTION__,$this->secret,7200))
       return $ticket;
     else{
       $result = request::url($this->host.'/cgi-bin/ticket/getticket')
         ->fetch(['access_token'=>$this->token(),'type'=>'wx_card'])
         ->json();
       if(isset($result->ticket)){
-        return $this->save(__FUNCTION__, $result->ticket);
+        return (new cache($this->appid.__FUNCTION__,$this->secret))($result->ticket);
         [
           'errcode' => 0,
           'errmsg' => 'ok',
@@ -124,14 +89,14 @@ class invoke{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140842
    */
   final function access_token(string $code):array{
-    if($access_token = $this->load(__FUNCTION__,7200))
+    if($access_token = (string)new cache($this->appid.__FUNCTION__,$this->secret,7200))
       return $access_token;
     else{
       $result = request::url($this->host.'/sns/oauth2/access_token')
         ->fetch(['appid'=>$this->appid,'secret'=>$this->secret,'code'=>$code,'grant_type'=>'authorization_code'])
         ->json();
       if(isset($result->access_token))
-        return $this->save(__FUNCTION__, $result->access_token);
+        return (new cache($this->appid.__FUNCTION__,$this->secret))($result->access_token);
       elseif(isset($json->errcode,$json->errmsg))
         throw new \RunTimeException($json->errmsg,$json->errcode);
       else
