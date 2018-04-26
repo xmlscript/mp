@@ -24,7 +24,7 @@ class invoke{
   final private function load(string $filename, int $expire):?string{
 
     $file= $this->dir.DIRECTORY_SEPARATOR.'.'.$this->appid.'.'.$filename;
-    $iv = substr($this->appid,-16);
+    $iv = str_pad(substr($this->appid,-16),16);
 
     if(
       file_exists($file) &&
@@ -45,12 +45,12 @@ class invoke{
   }
 
 
-  final private function &save(string $filename, string $str):string{
+  final private function save(string $filename, string $str):string{
 
     $file= $this->dir.DIRECTORY_SEPARATOR.'.'.$this->appid.'.'.$filename;
-    $iv = substr($this->appid,-16);
+    $iv = str_pad(substr($this->appid,-16),16);
 
-    file_put_contents($file, openssl_encrypt($result->access_token,self::CIPHER,$this->secret,OPENSSL_RAW_DATA,$iv)) or error_log("无法写入$file");
+    file_put_contents($file, openssl_encrypt($str,self::CIPHER,$this->secret,OPENSSL_RAW_DATA,$iv)) or error_log("无法写入$file");
 
     return $str;
 
