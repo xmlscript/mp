@@ -36,11 +36,11 @@ class invoke{
       return (unset)(is_writable($file) && unlink($file));
   }
 
-  final function r():?string{
+  final function read():?string{
     return $this->load('test',7200);
   }
 
-  final function w():string{
+  final function write():string{
     return $this->save('test','testing...');
   }
 
