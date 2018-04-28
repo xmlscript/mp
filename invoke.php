@@ -23,8 +23,7 @@ class invoke{
 
 
   final function token():string{
-
-    if($token = (string)new cache($this->appid.__FUNCTION__,$this->secret,7200))
+    if(strlen($token=(string)new cache($this->appid.__FUNCTION__,$this->secret,7200)))
       return $token;
     else{
       $result = request::url($this->host.'/cgi-bin/token')
