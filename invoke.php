@@ -1,7 +1,7 @@
 <?php namespace mp; // vim: se fdm=marker:
 
-use \http\request;
-use \tmp\cache;
+use http\request;
+use tmp\cache;
 
 class invoke{
 
