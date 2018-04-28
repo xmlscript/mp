@@ -23,7 +23,7 @@ class invoke{
 
 
   final function token():string{
-    if(strlen($token=(string)new cache($this->appid.__FUNCTION__,$this->secret,7200)))
+    if($token=(string)new cache($this->appid.__FUNCTION__,$this->secret,7200))
       return $token;
     else{
       $result = request::url($this->host.'/cgi-bin/token')
@@ -32,8 +32,10 @@ class invoke{
       if(isset($result->access_token)){
         return (new cache($this->appid.__FUNCTION__,$this->secret))($result->access_token);
       }else
-        throw new \Exception($result->errmsg, $result->errcode);
+        return $result->errcode;
+        //throw new \Exception($result->errmsg, $result->errcode);
     }
+    //return new cache($this->appid.__FUNCTION__,$this->secret,7200)?:(new cache($this->appid.__FUNCTION__,$this->secret,7200))(request::url($this->host.'/cgi-bin/token')->fetch(['grant_type'=>'client_credential','appid'=>$this->appid,'secret'=>$this->secret])->json()->acces_token?:null);
   }
 
 
