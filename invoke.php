@@ -187,6 +187,11 @@ class invoke{
   }
 
 
+  function who():string{
+    return $this->token();
+  }
+
+
   //FIXME: 封装的不彻底
   function whoami(string $openid){
     return request::url($this->host.'/cgi-bin/user/info')
