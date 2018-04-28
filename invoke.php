@@ -188,7 +188,11 @@ class invoke{
 
 
   function who():string{
-    return $this->token();
+    try{
+      return $this->token();
+    }catch(Throwable $e){
+      return $e->getMessage();
+    }
   }
 
 
