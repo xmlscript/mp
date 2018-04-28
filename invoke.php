@@ -32,8 +32,7 @@ class invoke{
       if(isset($result->access_token)){
         return (new cache($this->appid.__FUNCTION__,$this->secret))($result->access_token);
       }else
-        return $result->errcode;
-        //throw new \Exception($result->errmsg, $result->errcode);
+        throw new \Exception($result->errmsg, $result->errcode);
     }
     //return new cache($this->appid.__FUNCTION__,$this->secret,7200)?:(new cache($this->appid.__FUNCTION__,$this->secret,7200))(request::url($this->host.'/cgi-bin/token')->fetch(['grant_type'=>'client_credential','appid'=>$this->appid,'secret'=>$this->secret])->json()->acces_token?:null);
   }
