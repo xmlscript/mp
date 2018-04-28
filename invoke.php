@@ -335,7 +335,7 @@ class invoke{
   function menu(
     array $menu=null,
     string $tag_id=null,//用户标签id，可以通过api查询
-    bool $sex=null,//false男 true女
+    int $sex=null,//1男 2女
     string $country=null,
     string $province=null,
     string $city=null,
@@ -354,7 +354,7 @@ class invoke{
         return $result;
       
 
-    }elseif($matchrule=array_filter(['tag_id'=>$tag_id,'sex'=>1<<$sex,'country'=>$country,'province'=>$province,'city'=>$city,'client_platform_type'=>$client_platform_type,'language'=>$language])){
+    }elseif($matchrule=array_filter(['tag_id'=>$tag_id,'sex'=>$sex,'country'=>$country,'province'=>$province,'city'=>$city,'client_platform_type'=>$client_platform_type,'language'=>$language])){
 
       $result = request::url($this->host.'/cgi-bin/menu/addconditional')
         ->query(['access_token'=>$this->token()])
