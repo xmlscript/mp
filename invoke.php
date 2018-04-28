@@ -335,9 +335,9 @@ class invoke{
   function menu(
     array $menu=null,
     string $tag_id=null,//用户标签id，可以通过api查询
-    int $sex=null,//1男2女
-    string $country=null,//国家/省份/城市 有areainfo.zip地区信息表可供下载
-    string $province=null,//从大往小匹配，能省略小的，但不能跳过大的
+    bool $sex=null,//false男 true女
+    string $country=null,
+    string $province=null,
     string $city=null,
     int $client_platform_type=null,//1=iOS, 2=Android, 3=Others
     string $language=null//21种语言: zh_CN, zh_TW, zh_HK, en, id, ms, es, ko, it, ja, pl, pt, ru, th, vi, ar, hi, he, tr, de, fr
@@ -354,7 +354,7 @@ class invoke{
         return $result;
       
 
-    }elseif($matchrule=array_filter(['tag_id'=>$tag_id,'sex'=>$sex,'country'=>$country,'province'=>$province,'city'=>$city,'client_platform_type'=>$client_platform_type,'language'=>$language])){
+    }elseif($matchrule=array_filter(['tag_id'=>$tag_id,'sex'=>1<<$sex,'country'=>$country,'province'=>$province,'city'=>$city,'client_platform_type'=>$client_platform_type,'language'=>$language])){
 
       $result = request::url($this->host.'/cgi-bin/menu/addconditional')
         ->query(['access_token'=>$this->token()])
