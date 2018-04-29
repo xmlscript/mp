@@ -30,7 +30,7 @@ class invoke{
         ->fetch(['grant_type'=>'client_credential','appid'=>$this->appid,'secret'=>$this->secret])
         ->json();
       if(isset($result->access_token)){
-        return new cache($this->appid.__FUNCTION__,$this->secret))($result->access_token)[0];
+        return (new cache($this->appid.__FUNCTION__,$this->secret))($result->access_token)[0];
       }else
         throw new \Exception($result->errmsg, $result->errcode);
     }
@@ -328,10 +328,24 @@ class invoke{
   }
 
 
+  function menu(string $menu=''):array{
+    if($menu)
+      return request::url($this->host.'/cgi-bin/menu/addconditional')
+        ->query(['access_token'=>$this->token()])
+        ->header('Content-Type','application/json;charset=UTF-8')
+        ->POST(json_encode($menu+$matchrule))
+        ->json();
+    else
+      return request::url($this->host.'/cgi-bin/menu/get')
+        ->fetch(['access_token'=>$this->token()])
+        ->json();
+  }
+
+
   /**
    * get/set菜单
    */
-  function menu(
+  function menux(
     array $menu=null,
     string $tag_id=null,//用户标签id，可以通过api查询
     int $sex=null,//1男 2女
