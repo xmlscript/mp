@@ -30,11 +30,10 @@ class invoke{
         ->fetch(['grant_type'=>'client_credential','appid'=>$this->appid,'secret'=>$this->secret])
         ->json();
       if(isset($result->access_token)){
-        return (new cache($this->appid.__FUNCTION__,$this->secret))($result->access_token);
+        return new cache($this->appid.__FUNCTION__,$this->secret))($result->access_token)[0];
       }else
         throw new \Exception($result->errmsg, $result->errcode);
     }
-    //return new cache($this->appid.__FUNCTION__,$this->secret,7200)?:(new cache($this->appid.__FUNCTION__,$this->secret,7200))(request::url($this->host.'/cgi-bin/token')->fetch(['grant_type'=>'client_credential','appid'=>$this->appid,'secret'=>$this->secret])->json()->acces_token?:null);
   }
 
 
@@ -50,7 +49,7 @@ class invoke{
         ->fecth(['access_token'=>$this->token()])
         ->json();
       if(isset($result->ticket)){
-        return (new cache($this->appid.__FUNCTION__,$this->secret))($result->ticket);
+        return (new cache($this->appid.__FUNCTION__,$this->secret))($result->ticket)[0];
       }else
         throw new \Exception($result->errmsg, $result->errcode);
     }
@@ -70,7 +69,7 @@ class invoke{
         ->fetch(['access_token'=>$this->token(),'type'=>'wx_card'])
         ->json();
       if(isset($result->ticket)){
-        return (new cache($this->appid.__FUNCTION__,$this->secret))($result->ticket);
+        return (new cache($this->appid.__FUNCTION__,$this->secret))($result->ticket)[0];
         [
           'errcode' => 0,
           'errmsg' => 'ok',
@@ -96,7 +95,7 @@ class invoke{
         ->fetch(['appid'=>$this->appid,'secret'=>$this->secret,'code'=>$code,'grant_type'=>'authorization_code'])
         ->json();
       if(isset($result->access_token))
-        return (new cache($this->appid.__FUNCTION__,$this->secret))($result->access_token);
+        return (new cache($this->appid.__FUNCTION__,$this->secret))($result->access_token)[0];
       elseif(isset($json->errcode,$json->errmsg))
         throw new \RunTimeException($json->errmsg,$json->errcode);
       else
