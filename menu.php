@@ -20,8 +20,7 @@ class menu{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141013
     if(($json=request::url(self::HOST.'/cgi-bin/menu/create')
       ->query(['access_token'=>$this->token])
-      ->body($json)
-      ->POST()
+      ->POST($json)
       ->json())->errcode)
       throw new \RuntimeException($json->errmsg,$json->errcode);
   }
@@ -36,8 +35,7 @@ class menu{
   function addconditional(string $json):stdClass{
     return request::url(self::HOST.'/cgi-bin/menu/addconditional')
       ->query(['access_token'=>$this->token])
-      ->body($json)
-      ->POST()
+      ->POST($json)
       ->json();
     //{"menuid":"208379533"}
     //{"errcode":40018,"errmsg":"invalid button name size"}
@@ -46,8 +44,7 @@ class menu{
   function delconditional(string $json):stdClass{
     return request::url(self::HOST.'/cgi-bin/menu/delconditional')
       ->query(['access_token'=>$this->token])
-      ->body($json)
-      ->POST()
+      ->POST($json)
       ->json();
     //{"menuid":"208379533"}
   }
@@ -55,8 +52,7 @@ class menu{
   function trymatch(string $json):stdClass{
     return request::url(self::HOST.'/cgi-bin/menu/trymatch')
       ->query(['access_token'=>$this->token])
-      ->body($json)
-      ->POST()
+      ->POST($json)
       ->json();
   }
 
