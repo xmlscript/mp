@@ -11,56 +11,66 @@ class menu{
     $this->token = $token;
   }
 
+  private function check(\stdClass $json):\stdClass{
+    if(isset($json->errcode,$json->errmsg)&&$json->errcode)
+      throw new \RuntimeException($json->errmsg,$json->errcode);
+    return $json;
+  }
+
   function __toString():string{
-    return str_replace('  ',' ',json_encode(json_decode(request::url(self::HOST.'/cgi-bin/menu/get')
-      ->fetch(['access_token'=>$this->token])),JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+    foreach(($obj=$this->check(request::url(self::HOST.'/cgi-bin/menu/get')->fetch(['access_token'=>$this->token])->json())->menu)->button as &$o)
+      unset($o->sub_button->sub_button);
+    return str_replace('  ',' ',json_encode($obj,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
   }
 
-  function create(string $json):void{
+  function create(string $json):bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141013
-    if(($json=request::url(self::HOST.'/cgi-bin/menu/create')
+    return json_decode($json)&&$this->check(request::url(self::HOST.'/cgi-bin/menu/create')
       ->query(['access_token'=>$this->token])
       ->POST($json)
-      ->json())->errcode)
-      throw new \RuntimeException($json->errmsg,$json->errcode);
+      ->json());
   }
 
-  function delete():void{
+  function delete():bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141015
-    if(($json=request::url(self::HOST.'/cgi-bin/menu/delete')
+    return !$this->check(request::url(self::HOST.'/cgi-bin/menu/delete')
       ->fetch(['access_token'=>$this->token])
-      ->json())->errcode)
-      throw new \RuntimeException($json->errmsg,$json->errcode);
+      ->json())->errcode;
   }
 
-  function addconditional(string $json):stdClass{
-    return request::url(self::HOST.'/cgi-bin/menu/addconditional')
+  function addconditional(string $json):string{
+    return $this->check(request::url(self::HOST.'/cgi-bin/menu/addconditional')
       ->query(['access_token'=>$this->token])
       ->POST($json)
-      ->json();
-    //{"menuid":"208379533"}
-    //{"errcode":40018,"errmsg":"invalid button name size"}
+      ->json())->menuid;
   }
 
-  function delconditional(string $json):stdClass{
-    return request::url(self::HOST.'/cgi-bin/menu/delconditional')
+  function delconditional(string $menuid):bool{
+    return $menuid&&$this->check(request::url(self::HOST.'/cgi-bin/menu/delconditional')
       ->query(['access_token'=>$this->token])
-      ->POST($json)
-      ->json();
-    //{"menuid":"208379533"}
+      ->POST(json_encode(['menuid'=>$menuid]))
+      ->json());
   }
 
-  function trymatch(string $json):stdClass{
-    return request::url(self::HOST.'/cgi-bin/menu/trymatch')
+  function trymatch(string $id):string{
+    foreach(($obj=$this->check(request::url(self::HOST.'/cgi-bin/menu/trymatch')
       ->query(['access_token'=>$this->token])
-      ->POST($json)
-      ->json();
+      ->POST(json_encode(['user_id'=>$json]))
+      ->json()))->button as &$o)
+      unset($o->sub_button->sub_button);
+
+    return str_replace('  ',' ',json_encode($obj,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
   }
 
   function get_current_selfmenu_info():string{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1434698695
-    return str_replace('  ',' ',json_encode(json_decode(request::url(self::HOST.'/cgi-bin/get_current_selfmenu_info')
-      ->fetch(['access_token'=>$this->token])),JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+    foreach(($obj=$this->check(request::url(self::HOST.'/cgi-bin/get_current_selfmenu_info')->fetch(['access_token'=>$this->token])->json())->selfmenu_info)->button as &$o)
+      if(isset($o->sub_button->list)){
+        $o->sub_button = $o->sub_button->list;
+        unset($o->sub_button->sub_button);
+      }
+
+    return str_replace('  ',' ',json_encode($obj,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
   }
 
 }
