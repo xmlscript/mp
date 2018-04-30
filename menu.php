@@ -11,6 +11,11 @@ class menu{
     $this->token = $token;
   }
 
+  function __toString():string{
+    return str_replace('  ',' ',json_encode(json_decode(request::url(self::HOST.'/cgi-bin/menu/get')
+      ->fetch(['access_token'=>$this->token])),JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+  }
+
   function create(string $json):void{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141013
     if(($json=request::url(self::HOST.'/cgi-bin/menu/create')
@@ -19,12 +24,6 @@ class menu{
       ->POST()
       ->json())->errcode)
       throw new \RuntimeException($json->errmsg,$json->errcode);
-  }
-
-  function get():string{
-    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141014
-    return str_replace('  ',' ',json_encode(json_decode(request::url(self::HOST.'/cgi-bin/menu/get')
-      ->fetch(['access_token'=>$this->token])),JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
   }
 
   function delete():stdClass{
