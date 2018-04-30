@@ -25,11 +25,12 @@ class menu{
       throw new \RuntimeException($json->errmsg,$json->errcode);
   }
 
-  function delete():stdClass{
+  function delete():void{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141015
-    return request::url(self::HOST.'/cgi-bin/menu/delete')
+    if(($json=request::url(self::HOST.'/cgi-bin/menu/delete')
       ->fetch(['access_token'=>$this->token])
-      ->json();
+      ->json())->errcode)
+      throw new \RuntimeException($json->errmsg,$json->errcode);
   }
 
   function addconditional(string $json):stdClass{
