@@ -56,11 +56,10 @@ class menu{
       ->json();
   }
 
-  function get_current_selfmenu_info():stdClass{
+  function get_current_selfmenu_info():string{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1434698695
-    return request::url(self::HOST.'/cgi-bin/get_current_selfmenu_info')
-      ->fetch(['access_token'=>$this->token])
-      ->json();
+    return str_replace('  ',' ',json_encode(json_decode(request::url(self::HOST.'/cgi-bin/get_current_selfmenu_info')
+      ->fetch(['access_token'=>$this->token])),JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
   }
 
 }
