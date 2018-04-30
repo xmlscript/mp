@@ -23,9 +23,8 @@ class menu{
 
   function get():string{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141014
-    return request::url(self::HOST.'/cgi-bin/menu/get')
-      ->fetch(['access_token'=>$this->token])
-      ->body();
+    return str_replace('  ',' ',json_encode(json_decode(request::url(self::HOST.'/cgi-bin/menu/get')
+      ->fetch(['access_token'=>$this->token])),JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
   }
 
   function delete():stdClass{
