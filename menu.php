@@ -13,7 +13,7 @@ class menu{
 
   function create(string $json){
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141013
-    return request::get(self::HOST.'/cgi-bin/menu/create')
+    return request::url(self::HOST.'/cgi-bin/menu/create')
       ->query(['access_token'=>$this->token])
       ->body($json)
       ->POST()
@@ -24,20 +24,20 @@ class menu{
 
   function get(){
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141014
-    return request::get(self::HOST.'/cgi-bin/menu/get')
+    return request::url(self::HOST.'/cgi-bin/menu/get')
       ->fetch(['access_token'=>$this->token])
       ->json();
   }
 
   function delete():stdClass{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141015
-    return request::get(self::HOST.'/cgi-bin/menu/delete')
+    return request::url(self::HOST.'/cgi-bin/menu/delete')
       ->fetch(['access_token'=>$this->token])
       ->json();
   }
 
   function addconditional(string $json):stdClass{
-    return request::get(self::HOST.'/cgi-bin/menu/addconditional')
+    return request::url(self::HOST.'/cgi-bin/menu/addconditional')
       ->query(['access_token'=>$this->token])
       ->body($json)
       ->POST()
@@ -47,7 +47,7 @@ class menu{
   }
 
   function delconditional(string $json):stdClass{
-    return request::get(self::HOST.'/cgi-bin/menu/delconditional')
+    return request::url(self::HOST.'/cgi-bin/menu/delconditional')
       ->query(['access_token'=>$this->token])
       ->body($json)
       ->POST()
@@ -56,7 +56,7 @@ class menu{
   }
 
   function trymatch(string $json):stdClass{
-    return request::get(self::HOST.'/cgi-bin/menu/trymatch')
+    return request::url(self::HOST.'/cgi-bin/menu/trymatch')
       ->query(['access_token'=>$this->token])
       ->body($json)
       ->POST()
@@ -65,7 +65,7 @@ class menu{
 
   function get_current_selfmenu_info():stdClass{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1434698695
-    return request::get(self::HOST.'/cgi-bin/get_current_selfmenu_info')
+    return request::url(self::HOST.'/cgi-bin/get_current_selfmenu_info')
       ->fetch(['access_token'=>$this->token])
       ->json();
   }
