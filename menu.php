@@ -11,22 +11,21 @@ class menu{
     $this->token = $token;
   }
 
-  function create(string $json){
+  function create(string $json):void{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141013
-    return request::url(self::HOST.'/cgi-bin/menu/create')
+    if(($json=request::url(self::HOST.'/cgi-bin/menu/create')
       ->query(['access_token'=>$this->token])
       ->body($json)
       ->POST()
-      ->json();
-    //{"errcode":0,"errmsg":"ok"}
-    //{"errcode":40018,"errmsg":"invalid button name size"}
+      ->json())->errcode)
+      throw new \RuntimeException($json->errmsg,$json->errcode);
   }
 
-  function get(){
+  function get():string{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141014
     return request::url(self::HOST.'/cgi-bin/menu/get')
       ->fetch(['access_token'=>$this->token])
-      ->json();
+      ->body();
   }
 
   function delete():stdClass{
