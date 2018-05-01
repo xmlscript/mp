@@ -18,9 +18,41 @@ class menu{
   }
 
   function __toString():string{
-    foreach(($obj=$this->check(request::url(self::HOST.'/cgi-bin/menu/get')->fetch(['access_token'=>$this->token])->json())->menu)->button as &$o)
-      unset($o->sub_button->sub_button);
-    return str_replace('  ',' ',json_encode($obj,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+    try{
+      return str_replace('  ',' ',json_encode($this->get(),JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+    }catch(\Throwable $t){
+      return '';
+    }
+  }
+
+  function get():\stdClass{
+    return $this->check(request::url(self::HOST.'/cgi-bin/menu/get')->fetch(['access_token'=>$this->token])->json());
+  }
+
+  function trymatch(string $id):\stdClass{
+    return $this->check(request::url(self::HOST.'/cgi-bin/menu/trymatch')
+      ->query(['access_token'=>$this->token])
+      ->POST(json_encode(['user_id'=>$id]))
+      ->json());
+  }
+
+  /**
+   * 总是能获取最后一次用过的menu，即便delete之后，也可以获取，但is_menu_open=0
+   */
+  function get_current_selfmenu_info():\stdClass{
+    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1434698695
+    return $this->check(request::url(self::HOST.'/cgi-bin/get_current_selfmenu_info')->fetch(['access_token'=>$this->token])->json());
+  }
+
+
+  /**
+   * @todo 判断不要重复添加，unique
+   */
+  function addconditional(string $json):string{
+    return $this->check(request::url(self::HOST.'/cgi-bin/menu/addconditional')
+      ->query(['access_token'=>$this->token])
+      ->POST($json)
+      ->json())->menuid;
   }
 
   function create(string $json):bool{
@@ -38,39 +70,12 @@ class menu{
       ->json())->errcode;
   }
 
-  function addconditional(string $json):string{
-    return $this->check(request::url(self::HOST.'/cgi-bin/menu/addconditional')
-      ->query(['access_token'=>$this->token])
-      ->POST($json)
-      ->json())->menuid;
-  }
-
-  function delconditional(string $menuid):bool{
+  function delconditional(int $menuid):bool{
     return $menuid&&$this->check(request::url(self::HOST.'/cgi-bin/menu/delconditional')
       ->query(['access_token'=>$this->token])
       ->POST(json_encode(['menuid'=>$menuid]))
       ->json());
   }
 
-  function trymatch(string $id):string{
-    foreach(($obj=$this->check(request::url(self::HOST.'/cgi-bin/menu/trymatch')
-      ->query(['access_token'=>$this->token])
-      ->POST(json_encode(['user_id'=>$json]))
-      ->json()))->button as &$o)
-      unset($o->sub_button->sub_button);
-
-    return str_replace('  ',' ',json_encode($obj,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
-  }
-
-  function get_current_selfmenu_info():string{
-    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1434698695
-    foreach(($obj=$this->check(request::url(self::HOST.'/cgi-bin/get_current_selfmenu_info')->fetch(['access_token'=>$this->token])->json())->selfmenu_info)->button as &$o)
-      if(isset($o->sub_button->list)){
-        $o->sub_button = $o->sub_button->list;
-        unset($o->sub_button->sub_button);
-      }
-
-    return str_replace('  ',' ',json_encode($obj,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
-  }
 
 }
