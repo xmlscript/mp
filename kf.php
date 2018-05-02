@@ -76,4 +76,64 @@ class kf{
       ->json());
   }
 
+
+  function create(string $kf_account, string $openid):bool{
+    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1458044820
+    return $kf_account&&$this->check(request::url($this->host.'/cgi-bin/customservice/kfsession/create')
+      ->query(['access_token'=>$this->token])
+      ->header('Content-Type','application/json;charset=UTF-8')
+      ->POST(json_encode(['kf_account'=>$kf_account,'openid'=>$openid]))
+      ->json());
+  }
+
+
+  function close(string $kf_account, string $openid):bool{
+    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1458044820
+    return $kf_account&&$this->check(request::url($this->host.'/cgi-bin/customservice/kfsession/close')
+      ->query(['access_token'=>$this->token])
+      ->header('Content-Type','application/json;charset=UTF-8')
+      ->POST(json_encode(['kf_account'=>$kf_account,'openid'=>$openid]))
+      ->json());
+  }
+
+
+  function getsession(string $openid):\stdClass{
+    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1458044820
+    return $this->check(request::url($this->host.'/cgi-bin/customservice/kfsession/getsession')
+      ->fetch(['access_token'=>$this->token,'openid'=>$openid])
+      ->json());
+  }
+
+
+  function getsessionlist(string $kf_account):array{
+    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1458044820
+    return $this->check(request::url($this->host.'/cgi-bin/customservice/kfsession/getsessionlist')
+      ->fetch(['access_token'=>$this->token,'kf_account'=>$kf_account])
+      ->json())->sessionlist;
+  }
+
+
+  function getwaitcase():array{
+    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1458044820
+    return $this->check(request::url($this->host.'/cgi-bin/customservice/kfsession/getwaitcase')
+      ->fetch(['access_token'=>$this->token])
+      ->json())->waitcaselist;
+  }
+
+
+  /**
+   * @param \DateTime $starttime unix时间戳
+   * @param \DateTime $endtime 时段最多24小时，而且不知道前后颠倒可以么？
+   * @param int $msgid 消息id顺序从小到大，从1开始
+   * @param int $number 每次获取条数，最多10000条
+   */
+  function getmsglist(\DateTime $starttime, \DateTime $endtime, int $msgid=1, int $number=10000):\stdClass{
+    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1464937269_mUtmK
+    return $this->check(request::url($this->host.'/cgi-bin/customservice/msgrecord/getmsglist')
+      ->query(['access_token'=>$this->token])
+      ->header('Content-Type','application/json;charset=UTF-8')
+      ->POST(json_encode(['starttime'=>$starttime,'endtime'=>$endtime,'msgid'=>$msgid,'number'=>$number]))
+      ->json());
+  }
+
 }
