@@ -10,18 +10,21 @@ class ip{
     $this->token = $token;
   }
 
+  private function check(\stdClass $json):\stdClass{
+    if(isset($json->errcode,$json->errmsg)&&$json->errcode)
+      throw new \RuntimeException($json->errmsg,$json->errcode);
+    return $json;
+  }
+
 
   /**
    * 获取官方ip
    */
-  function list():array{
+  function getcallbackip():array{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140187
-    $result = request::url($this->host.'/cgi-bin/getcallbackip')
+    return $this->check(request::url($this->host.'/cgi-bin/getcallbackip')
       ->fetch(['access_token'=>$this->token])
-      ->json();
-    if(isset($result['errcode'])&&$result['errcode'])
-      throw new \Exception($result['errmsg'],$result['errcode']);
-    return $result['ip_list'];
+      ->json())->ip_list;
   }
 
 }
