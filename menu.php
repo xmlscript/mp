@@ -41,6 +41,7 @@ class menu{
   function trymatch(string $id):\stdClass{
     return $this->check(request::url(self::HOST.'/cgi-bin/menu/trymatch')
       ->query(['access_token'=>$this->token])
+      ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['user_id'=>$id]))
       ->json());
   }
@@ -60,6 +61,7 @@ class menu{
   function addconditional(string $json):string{
     return $this->check(request::url(self::HOST.'/cgi-bin/menu/addconditional')
       ->query(['access_token'=>$this->token])
+      ->header('Content-Type','application/json;charset=UTF-8')
       ->POST($json)
       ->json())->menuid;
   }
@@ -68,6 +70,7 @@ class menu{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141013
     return json_decode($json)&&$this->check(request::url(self::HOST.'/cgi-bin/menu/create')
       ->query(['access_token'=>$this->token])
+      ->header('Content-Type','application/json;charset=UTF-8')
       ->POST($json)
       ->json());
   }
@@ -82,6 +85,7 @@ class menu{
   function delconditional(int $menuid):bool{
     return $menuid&&$this->check(request::url(self::HOST.'/cgi-bin/menu/delconditional')
       ->query(['access_token'=>$this->token])
+      ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['menuid'=>$menuid]))
       ->json());
   }
