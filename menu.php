@@ -11,18 +11,27 @@ class menu{
     $this->token = $token;
   }
 
+  function __toString():string{
+    try{
+      $menu = $this->get()->menu;
+      unset($menu->menuid);
+      foreach($menu->button as &$obj){
+        if(empty($obj->sub_button))
+          unset($obj->sub_button);
+        else
+          foreach($obj->sub_button as &$obj)
+            unset($obj->sub_button);
+      }
+      return str_replace('  ',' ',json_encode($menu,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
+    }catch(\Throwable $t){
+      return '';
+    }
+  }
+
   private function check(\stdClass $json):\stdClass{
     if(isset($json->errcode,$json->errmsg)&&$json->errcode)
       throw new \RuntimeException($json->errmsg,$json->errcode);
     return $json;
-  }
-
-  function __toString():string{
-    try{
-      return str_replace('  ',' ',json_encode($this->get(),JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES));
-    }catch(\Throwable $t){
-      return '';
-    }
   }
 
   function get():\stdClass{
