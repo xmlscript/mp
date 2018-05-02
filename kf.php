@@ -25,16 +25,90 @@ class kf{
   }
 
 
+  function getkflist():array{
+    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140547
+    return $this->check(request::url($this->host.'/cgi-bin/customservice/getkflist')
+      ->fetch(['access_token'=>$this->token()])
+      ->json())->kf_list;
+  }
+
+
+  function send(string $openid, string $msgtype, array $content, string $kf_account=''):\stdClass{
+    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140547
+    return $this->check(request::url($this->host.'/cgi-bin/message/custom/send')
+      ->query(['access_token'=>$this->token])
+      ->header('Content-Type','application/json;charset=UTF-8')
+      ->POST(json_encode(['to_user'=>$openid,'msgtype'=>$msgtype,$msgtype=>$content,'customservice'=>['kf_account'=>$kf_account]]))
+      ->json());
+  }
+
+  function send_text(string $openid, string $content, string $kf_account=''):\stdClass{
+    return $this->send($openid, 'text', ['content'=>$content], $kf_account);
+  }
+
+  function send_image(string $openid, string $media_id, string $kf_account=''):\stdClass{
+    return $this->send($openid, 'image', ['media_id'=>$media_id], $kf_account);
+  }
+
+  function send_voice(string $openid, string $media_id, string $kf_account=''):\stdClass{
+    return $this->send($openid, 'voice', ['media_id'=>$media_id], $kf_account);
+  }
+
+  function send_video(string $openid, string $media_id, string $thumb_media_id, string $title, string $description, string $kf_account=''):\stdClass{
+    return $this->send($openid, 'video', ['media_id'=>$media_id,'thumb_media_id'=>$thumb_media_id,'title'=>$title,'description'=>$description], $kf_account);
+  }
+
+  function send_music(string $openid, string $music_url, string $hqmusicurl, string $thumb_media_id, string $title, string $description, string $kf_account=''):\stdClass{
+    return $this->send($openid, 'music', ['music_url'=>$music_url,'hqmusicurl'=>$hqmusicurl,'thumb_media_id'=>$thumb_media_id,'title'=>$title,'description'=>$description], $kf_account);
+  }
+
+  function send_news(){
+    //TODO
+  }
+
+  function send_mpnews(){
+    //TODO
+  }
+
+  function send_miniprogrampage(){
+    //TODO
+  }
+
+
+  function typing(string $openid, bool $typing):bool{
+    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140547
+    return $openid&&$this->check(request::url($this->host.'/cgi-bin/message/custom/typing')
+      ->query(['access_token'=>$this->token])
+      ->header('Content-Type','application/json;charset=UTF-8')
+      ->POST(json_encode(['touser'=>$openid,'command'=>$typing?'Typing':'CancelTyping']))
+      ->json());
+  }
+
+
   /**
    * @param string $kf_account 完整客服帐号，格式为：帐号前缀@公众号微信号，帐号前缀最多10个字符，必须是英文、数字字符或者下划线，后缀为公众号微信号，长度不超过30个字符
    * @param string $nickname 限制16字
    * @todo 自动补全kf_account
    */
   function add(string $kf_account, string $nickname):bool{
+    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1458044813
     return $kf_account&&$this->check(request::url($this->host.'/cgi-bin/customservice/kfaccount/add')
       ->query(['access_token'=>$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['kf_account'=>$kf_account,'nickname'=>$nickname]))
+      ->json());
+  }
+
+
+  /**
+   * @param string $password 文档说是pswmd5，一定要md5吗？？？
+   */
+  function add2(string $kf_account, string $nickname, string $password):bool{
+    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140547
+    return $kf_account&&$this->check(request::url($this->host.'/customservice/kfaccount/add')
+      ->query(['access_token'=>$this->token])
+      ->header('Content-Type','application/json;charset=UTF-8')
+      ->POST(json_encode(['kf_account'=>$kf_account,'nickname'=>$nickname,'password'=>md5($password)]))
       ->json());
   }
 
@@ -73,6 +147,18 @@ class kf{
   function del(string $kf_account):bool{
     return $kf_account&&$this->check(request::url($this->host.'/cgi-bin/customservice/del')
       ->fetch(['access_token'=>$this->token,'kf_account'=>$kf_account])
+      ->json());
+  }
+
+
+  /**
+   * 文档是胡扯！GET/POST前后矛盾，而且为什么要这么多参数？？？
+   */
+  function del2(string $kf_account,string $nickname, string $password):bool{
+    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140547
+    return $kf_account&&$this->check(request::url($this->host.'/customservice/del')
+      ->fetch(['access_token'=>$this->token])
+      ->POST(json_encode(['kf_account'=>$kf_account,'nickname'=>$nickname,'password'=>md5($password)]))
       ->json());
   }
 
