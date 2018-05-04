@@ -33,48 +33,11 @@ class kf{
   }
 
 
-  function send(string $openid, string $msgtype, array $content, string $kf_account=''):\stdClass{
-    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140547
-    return $this->check(request::url($this->host.'/cgi-bin/message/custom/send')
-      ->query(['access_token'=>$this->token])
-      ->header('Content-Type','application/json;charset=UTF-8')
-      ->POST(json_encode(['to_user'=>$openid,'msgtype'=>$msgtype,$msgtype=>$content,'customservice'=>['kf_account'=>$kf_account]]))
-      ->json());
-  }
-
-  function send_text(string $openid, string $content, string $kf_account=''):\stdClass{
-    return $this->send($openid, 'text', ['content'=>$content], $kf_account);
-  }
-
-  function send_image(string $openid, string $media_id, string $kf_account=''):\stdClass{
-    return $this->send($openid, 'image', ['media_id'=>$media_id], $kf_account);
-  }
-
-  function send_voice(string $openid, string $media_id, string $kf_account=''):\stdClass{
-    return $this->send($openid, 'voice', ['media_id'=>$media_id], $kf_account);
-  }
-
-  function send_video(string $openid, string $media_id, string $thumb_media_id, string $title, string $description, string $kf_account=''):\stdClass{
-    return $this->send($openid, 'video', ['media_id'=>$media_id,'thumb_media_id'=>$thumb_media_id,'title'=>$title,'description'=>$description], $kf_account);
-  }
-
-  function send_music(string $openid, string $music_url, string $hqmusicurl, string $thumb_media_id, string $title, string $description, string $kf_account=''):\stdClass{
-    return $this->send($openid, 'music', ['music_url'=>$music_url,'hqmusicurl'=>$hqmusicurl,'thumb_media_id'=>$thumb_media_id,'title'=>$title,'description'=>$description], $kf_account);
-  }
-
-  function send_news(){
-    //TODO
-  }
-
-  function send_mpnews(){
-    //TODO
-  }
-
-  function send_miniprogrampage(){
-    //TODO
-  }
-
-
+  /**
+   * 下发输入状态，需要客服之前30秒内跟用户有过消息交互。(如果30s内客服对粉丝发过消息，这样算吗？)
+   * 在输入状态中（持续15s），不可重复下发输入态。(重复设置Typing是多余且无效的)
+   * 在输入状态中，如果向用户下发消息，会同时取消输入状态。（一旦发送消息，则Typing状态作废）
+   */
   function typing(string $openid, bool $typing):bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140547
     return $openid&&$this->check(request::url($this->host.'/cgi-bin/message/custom/typing')
