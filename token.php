@@ -6,7 +6,8 @@ use tmp\cache;
 final class token{
 
   private const HOST = 'https://api.weixin.qq.com';
-  private $appid,$secret;
+  public $appid;
+  private $secret;
   private static $expires_in=7200;
   
   function __construct(string $appid, string $secret){
