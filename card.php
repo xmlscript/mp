@@ -7,7 +7,7 @@ class card{
 
   private $host, $token, $ticket;
   
-  final function __construct(string $token, string $host='https://api.weixin.qq.com'){
+  final function __construct(token $token, string $host='https://api.weixin.qq.com'){
     $this->host = $host;
     $this->token = $token;
   }
@@ -19,14 +19,14 @@ class card{
    * ticket应该在服务端缓存一份，7200秒(两小时)有效期
    */
   final function ticket():string{
-    if($ticket = (string)new cache($this->appid.__FUNCTION__,$this->token,7200))
+    if($ticket = (string)new cache($this->token->appid.__FUNCTION__,$this->token,7200))
       return $ticket;
     else{
       $result = request::url($this->host.'/cgi-bin/ticket/getticket')
         ->fetch(['access_token'=>$this->token,'type'=>'wx_card'])
         ->json();
       if(isset($result->ticket)){
-        return (new cache($this->appid.__FUNCTION__,$this->token))($result->ticket)[0];
+        return (new cache($this->token->appid.__FUNCTION__,$this->token))($result->ticket)[0];
         [
           'errcode' => 0,
           'errmsg' => 'ok',

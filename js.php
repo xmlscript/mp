@@ -7,7 +7,7 @@ class js{
 
   private $token,$ticket;
   
-  final function __construct(string $token, string $host='https://api.weixin.qq.com'){
+  final function __construct(token $token, string $host='https://api.weixin.qq.com'){
     $this->token = $token;
   }
 
@@ -17,14 +17,14 @@ class js{
    * ticket应该在服务端缓存一份，7200秒(两小时)有效期
    */
   final function ticket():string{
-    if($ticket = (string)new cache($this->appid.__FUNCTION__,$this->secret,7200))
+    if($ticket = (string)new cache($this->token->appid.__FUNCTION__,$this->secret,7200))
       return $ticket;
     else{
       $result = request::url($this->host.'/cgi-bin/ticket/getticket')
         ->fecth(['access_token'=>$this->token])
         ->json();
       if(isset($result->ticket)){
-        return (new cache($this->appid.__FUNCTION__,$this->secret))($result->ticket)[0];
+        return (new cache($this->token->appid.__FUNCTION__,$this->secret))($result->ticket)[0];
       }else
         throw new \Exception($result->errmsg, $result->errcode);
     }
@@ -44,7 +44,7 @@ class js{
    */
   final function url(string $uri, string $state='', string $scope='snsapi_base'):string{
     return 'https://open.weixin.qq.com/connect/oauth2/authorize?'.http_build_query([
-      'appid'=>$this->appid,
+      'appid'=>$this->token->appid,
       'redirect_uri'=>request::normalize($uri),
       'response_type'=>'code',
       'scope'=>$scope,
