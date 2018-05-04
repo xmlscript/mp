@@ -121,4 +121,38 @@ class message{
       ->json());
   }
 
+
+  /**
+   * 引导用户访问这个url，以获取授权，得到一次给用户推送一条模板消息的资格
+   * @param string $appid
+   * @param int $scene 0到10000
+   * @param string $template_id
+   * @param string $redirect_url 域名部分必须匹配“业务域名”
+   * @param string $reserved 0-9a-zA-Z最多128字
+   * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1500374289_66bvB
+   */
+  static function subscribemsg(string $appid,int $scene, string $template_id, string $redirect_url, string $reserved):string{
+    return request::url('https://mp.weixin.qq.com/mp/subscribemsg')
+      ->query([
+        'action'=>'get_confirm',
+        'appid'=>$appid,
+        'scene'=>$scene,
+        'template_id'=>$template_id,
+        'redirect_url'=>rawurlencode($redirect_url),
+        'reserved'=>rawurlencode($reserved)
+      ]).'#wechat_redirect';
+  }
+
+
+  /**
+   * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1500374289_66bvB
+   */
+  function subscribe(string $openid, string $template_id, string $scene, string $title, array $data):bool{
+    return $openid&&$this->check(request::url(self::HOST.'/cgi-bin/message/template/subscribe')
+      ->query(['access_token'=>$this->token])
+      ->header('Content-Type','application/json;charset=UTF-8')
+      ->POST(json_encode(['touser'=>$openid,'template_id'=>$template_id,'scene'=>$scene,'title'=>$title,'data'=>$data]))
+      ->json());
+  }
+
 }
