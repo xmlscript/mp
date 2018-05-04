@@ -5,6 +5,38 @@ use tmp\cache;
 
 class invoke{
 
+  private $appid,$secret,$host;
+  private const CIPHER = 'AES-256-CBC';
+  
+  final function __construct(string $appid, string $secret, string $host='https://api.weixin.qq.com'){
+    $this->appid = $appid;
+    $this->secret = $secret;
+    $this->host = $host;
+    $this->dir = session_save_path();//FIXME 仍然在/tmp之下呢？
+    $this->dir = getcwd();
+  }
+
+
+  final static function construct(string $appid, string $secret, string $host='https://api.weixin.qq.com'):self{
+    return new self($appid, $secret, $host);
+  }
+
+
+  final function token():string{
+    if($token=(string)new cache($this->appid.__FUNCTION__,$this->secret,7200))
+      return $token;
+    else{
+      $result = request::url($this->host.'/cgi-bin/token')
+        ->fetch(['grant_type'=>'client_credential','appid'=>$this->appid,'secret'=>$this->secret])
+        ->json();
+      if(isset($result->access_token)){
+        return (new cache($this->appid.__FUNCTION__,$this->secret))($result->access_token)[0];
+      }else
+        throw new \Exception($result->errmsg, $result->errcode);
+    }
+  }
+
+
   /**
    * 公众号内嵌网页需要调用JSSDK，首先需要使用token获取ticket，进而计算得到signature
    * ticket应该在服务端缓存一份，7200秒(两小时)有效期
