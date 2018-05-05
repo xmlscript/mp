@@ -6,6 +6,7 @@ use tmp\cache;
 class js{
 
   private $token,$ticket;
+  private static $expires_in=7200;
   
   final function __construct(token $token, string $host='https://api.weixin.qq.com'){
     $this->token = $token;
@@ -16,18 +17,17 @@ class js{
    * 公众号内嵌网页需要调用JSSDK，首先需要使用token获取ticket，进而计算得到signature
    * ticket应该在服务端缓存一份，7200秒(两小时)有效期
    */
-  final function ticket():string{
-    if($ticket = (string)new cache($this->token->appid.__FUNCTION__,$this->secret,7200))
-      return $ticket;
-    else{
-      $result = request::url($this->host.'/cgi-bin/ticket/getticket')
-        ->fecth(['access_token'=>$this->token])
+  function ticket():string{
+    return new cache($this->token->appid.__FUNCTION__, $this->secret, self::$expires_in, function(){
+      $result = request::url(self::HOST.'/cgi-bin/ticket/getticket')
+        ->fetch(['access_token'=>$this->token])
         ->json();
       if(isset($result->ticket)){
-        return (new cache($this->token->appid.__FUNCTION__,$this->secret))($result->ticket)[0];
+        self::$expires_in = $result->expires_in;
+        return $result->ticket;
       }else
-        throw new \Exception($result->errmsg, $result->errcode);
-    }
+        error_log($result->errmsg);
+    });
   }
 
 
@@ -42,14 +42,13 @@ class js{
    * @param string $scope 应用授权作用域，snsapi_base （不弹出授权页面，直接跳转，只能获取用户openid），snsapi_userinfo （弹出授权页面，可通过openid拿到昵称、性别、所在地。并且， 即使在未关注的情况下，只要用户授权，也能获取其信息 ）
    * @param string $state 重定向后会带上state参数，开发者可以填写a-zA-Z0-9的参数值，最多128字节
    */
-  final function url(string $uri, string $state='', string $scope='snsapi_base'):string{
-    return 'https://open.weixin.qq.com/connect/oauth2/authorize?'.http_build_query([
-      'appid'=>$this->token->appid,
-      'redirect_uri'=>request::normalize($uri),
-      'response_type'=>'code',
-      'scope'=>$scope,
-      'state'=>$state
-    ]).'#wechat_redirect';
+  final static function url(string $appid, string $uri, string $state='', string $scope='snsapi_base'):string{
+    return request::url('https://open.weixin.qq.com/connect/oauth2/authorize')->query([
+        'appid'=>$appid,
+        'redirect_uri'=>$uri,
+        'scope'=>$scope,
+        'state'=>$state
+      ]).'#wechat_redirect';
   }
 
 }
