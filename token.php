@@ -20,10 +20,9 @@ final class token{
       $result = request::url(self::HOST.'/cgi-bin/token')
         ->fetch(['grant_type'=>'client_credential','appid'=>$this->appid,'secret'=>$this->secret])
         ->json();
-      if(isset($result->access_token)){
-        self::$expires_in = $result->expires_in;
+      if(isset($result->access_token,$result->expires_in)&&self::$expires_in=$result->expires_in)
         return $result->access_token;
-      }else
+      else
         error_log($result->errmsg);
     });
   }
