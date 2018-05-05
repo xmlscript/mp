@@ -87,14 +87,16 @@ class card{
    * @see https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=cardsign
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115
    */
-  function chooseCard(string $id, string $code, string $nonceStr):array{
-    $arr = [
+  function chooseCard(string $id, string $code=null, string $openid=null, string $balance=null):array{
+    $arr = array_filter([
       new ticket($this->token,'wx_card'),
       $time=time(),
-      $nonceStr,
+      $nonceStr=md5($time),
       $id,
-      $code
-    ];
+      $code,
+      $openid,
+      $balance,
+    ]);
     sort($arr,SORT_STRING);
     return [
       //'shopId' => '', #用于筛选出拉起带有指定location_list(shopID)的卡券列表
