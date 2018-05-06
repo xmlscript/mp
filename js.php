@@ -10,21 +10,21 @@ class js extends wx{
    * 如果要做成通用的样子，必须额外添加判断url来源的逻辑，然后路由到各自适用的appid上
    * 如果还不行，则需要以appid来hash所有支持的token
    */
-  function GET():array{
-    return (new wx(new token($_ENV['APPID'],$_ENV['SECRET'])))->config($_SERVER['HTTP_REFERRER']);
+  function GET(string $appid, string $url):array{
+    return (new js(new token($_ENV['APPID'],$_ENV['SECRET'])))->config($url);
   }
 
 
   final function config(string &$url):array{
     $arr = [
-      'noncestr' => $nonceStr='xxx',
-      'jsapi_ticket' => new ticket($this->token,'jsapi'),
       'timestamp' => $time=time(),
+      'noncestr' => $nonceStr=md5($time+$_SERVER['REQUEST_TIME_FLOAT']),
+      'jsapi_ticket' => new ticket($this->token,'jsapi'),
       'url' => $url,
     ];
     sort($arr,SORT_STRING);
     return [
-      'timestamp' => $timestamp,
+      'timestamp' => $time,
       'nonceStr' => $nonceStr,
       'signature' => sha1(http_build_query($arr)),
     ];

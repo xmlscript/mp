@@ -75,7 +75,7 @@ class card extends wx{
     $arr = array_filter([
       new ticket($this->token,'wx_card'),
       $time=time(),
-      $nonceStr=md5($time),
+      $nonceStr=md5($time+$_SERVER['REQUEST_TIME_FLOAT']),
       $id,
       $code,
       $openid,
