@@ -1,8 +1,6 @@
 <?php namespace mp; // vim: se fdm=marker:
 
 use http\request;
-use tmp\cache;
-
 
 /**
  * 卡券二维码，只允许用户扫码领取卡券一次而已。
@@ -14,21 +12,7 @@ use tmp\cache;
  *  - url 二维码解析的实际内容，开发者可以自行生成个性化的二维码
  *  - show_qrcode_url 已经拼装好了的showqrcode网址，真是让人精神分裂。。。
  */
-class card{
-
-  private const HOST = 'https://api.weixin.qq.com';
-  private $token;
-  
-  final function __construct(token $token){
-    $this->token = $token;
-  }
-
-  private function check(\stdClass $json):\stdClass{
-    if(isset($json->errcode,$json->errmsg)&&$json->errcode)
-      throw new \RuntimeException($json->errmsg,$json->errcode);
-    return $json;
-  }
-
+class card extends wx{
 
   /**
    * @param array $mixed 非常复杂的结构

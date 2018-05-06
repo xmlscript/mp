@@ -14,21 +14,7 @@ use http\request;
  *  - expire_seconds 可能没有存在的意义，生成临时二维码时指定的时间，过期后扫描应该无法触发事件，也不会干扰业务流
  *  - url 类似"http://weixin.qq.com/q/kZgfwMTm72WWPkovabbI"的网址，能被微信客户端时别触发事件吧？待测试
  */
-class qrcode{
-
-  private const HOST = 'https://api.weixin.qq.com';
-  private $token;
-  
-  final function __construct(string $token){
-    $this->token = $token;
-  }
-
-  private function check(\stdClass $json):\stdClass{
-    if(isset($json->errcode,$json->errmsg)&&$json->errcode)
-      throw new \RuntimeException($json->errmsg,$json->errcode);
-    return $json;
-  }
-
+class qrcode extends wx{
 
   /**
    * 创建临时二维码

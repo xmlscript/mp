@@ -2,20 +2,7 @@
 
 use http\request;
 
-class ip{
-
-  private $token;
-  
-  final function __construct(string $token, string $host='https://api.weixin.qq.com'){
-    $this->token = $token;
-  }
-
-  private function check(\stdClass $json):\stdClass{
-    if(isset($json->errcode,$json->errmsg)&&$json->errcode)
-      throw new \RuntimeException($json->errmsg,$json->errcode);
-    return $json;
-  }
-
+class ip extends wx{
 
   /**
    * 获取官方ip

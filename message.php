@@ -2,20 +2,7 @@
 
 use http\request;
 
-class message{
-
-  private $token;
-  
-  final function __construct(token $token, string $host='https://api.weixin.qq.com'){
-    $this->token = $token;
-  }
-
-  private function check(\stdClass $json):\stdClass{
-    if(isset($json->errcode,$json->errmsg)&&$json->errcode)
-      throw new \RuntimeException($json->errmsg,$json->errcode);
-    return $json;
-  }
-
+class message extends wx{
 
   /**
    * 暂时不知道返回什么数据

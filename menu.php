@@ -2,14 +2,7 @@
 
 use http\request;
 
-class menu{
-
-  private const HOST = 'https://api.weixin.qq.com';
-  private $token,$host;
-
-  final function __construct(string $token){
-    $this->token = $token;
-  }
+class menu extends wx{
 
   function __toString():string{
     try{
@@ -35,12 +28,12 @@ class menu{
   }
 
   function get():\stdClass{
-    return $this->check(request::url(self::HOST.'/cgi-bin/menu/get')->fetch(['access_token'=>$this->token])->json());
+    return $this->check(request::url(self::HOST.'/cgi-bin/menu/get')->fetch(['access_token'=>(string)$this->token])->json());
   }
 
   function trymatch(string $id):\stdClass{
     return $this->check(request::url(self::HOST.'/cgi-bin/menu/trymatch')
-      ->query(['access_token'=>$this->token])
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['user_id'=>$id]))
       ->json());
@@ -51,7 +44,7 @@ class menu{
    */
   function get_current_selfmenu_info():\stdClass{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1434698695
-    return $this->check(request::url(self::HOST.'/cgi-bin/get_current_selfmenu_info')->fetch(['access_token'=>$this->token])->json());
+    return $this->check(request::url(self::HOST.'/cgi-bin/get_current_selfmenu_info')->fetch(['access_token'=>(string)$this->token])->json());
   }
 
 
@@ -60,7 +53,7 @@ class menu{
    */
   function addconditional(string $json):string{
     return $this->check(request::url(self::HOST.'/cgi-bin/menu/addconditional')
-      ->query(['access_token'=>$this->token])
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST($json)
       ->json())->menuid;
@@ -69,7 +62,7 @@ class menu{
   function create(string $json):bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141013
     return json_decode($json)&&$this->check(request::url(self::HOST.'/cgi-bin/menu/create')
-      ->query(['access_token'=>$this->token])
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST($json)
       ->json());
@@ -78,13 +71,13 @@ class menu{
   function delete():bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141015
     return !$this->check(request::url(self::HOST.'/cgi-bin/menu/delete')
-      ->fetch(['access_token'=>$this->token])
+      ->fetch(['access_token'=>(string)$this->token])
       ->json())->errcode;
   }
 
   function delconditional(int $menuid):bool{
     return $menuid&&$this->check(request::url(self::HOST.'/cgi-bin/menu/delconditional')
-      ->query(['access_token'=>$this->token])
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['menuid'=>$menuid]))
       ->json());

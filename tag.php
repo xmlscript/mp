@@ -2,20 +2,7 @@
 
 use http\request;
 
-class tag{
-
-  private $token;
-  
-  final function __construct(string $token){
-    $this->token = $token;
-  }
-
-  private function check(\stdClass $json):\stdClass{
-    if(isset($json->errcode,$json->errmsg)&&$json->errcode)
-      throw new \RuntimeException($json->errmsg,$json->errcode);
-    return $json;
-  }
-
+class tag extends wx{
 
   /**
    * @param string ...$name 公众号最多100个标签，每个标签限制30字

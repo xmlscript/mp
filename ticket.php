@@ -13,28 +13,27 @@ use tmp\cache;
 class ticket{
 
   private const HOST = 'https://api.weixin.qq.com';
-  private $token,$type;
+  public $ticket;
   private static $expires_in;
   
   /**
    * @param string $type "jsapi"
    */
   final function __construct(token $token, string $type){
-    $this->token = $token;
-    $this->type = $type;
-  }
-
-
-  function __toString():string{
-    return new cache($this->token->appid.$this->type, $this->secret, self::$expires_in[$this->type]??7200, function(){
+    $this->ticket = new cache($this->token->appid.$type, $this->secret, self::$expires_in[$type]??7200, function($type){
       $result = request::url(self::HOST.'/cgi-bin/ticket/getticket')
-        ->fetch(['access_token'=>$this->token,'type'=>$this->type])
+        ->fetch(['access_token'=>$this->token,'type'=>$type])
         ->json();
       if(isset($result->ticket,$result->expires_in)&&self::$expires_in=$result->expires_in)
         return $result->ticket;
       else
         error_log($result->errmsg);
     });
+  }
+
+
+  function __toString():string{
+    return $this->ticket;
   }
 
 }

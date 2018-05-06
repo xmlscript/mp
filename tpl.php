@@ -2,14 +2,7 @@
 
 use http\request;
 
-class tpl{
-
-  private $token;
-  
-  final function __construct(string $token, string $host='https://api.weixin.qq.com'){
-    $this->token = $token;
-  }
-
+class tpl extends wx{
 
   /**
    * 获取可用的消息模板

@@ -2,20 +2,7 @@
 
 use http\request;
 
-class user{
-
-  private $token;
-  
-  final function __construct(string $token){
-    $this->token = $token;
-  }
-
-  private function check(\stdClass $json):\stdClass{
-    if(isset($json->errcode,$json->errmsg)&&$json->errcode)
-      throw new \RuntimeException($json->errmsg,$json->errcode);
-    return $json;
-  }
-
+class user extends wx{
 
   /**
    * 这个接口设计的特别幼稚

@@ -2,20 +2,7 @@
 
 use http\request;
 
-class hongbao{
-
-  private $token;
-  
-  final function __construct(string $token, string $host='https://api.weixin.qq.com'){
-    $this->token = $token;
-  }
-
-  private function check(\SimpleXMLElement $xml):\SimpleXMLElement{
-    if(isset($xml->return_code,$xml->return_msg)&&$xml->return_code==='FAIL')
-      throw new \RuntimeException($xml->return_msg,$xml->return_code);
-    return $xml;
-  }
-
+class hongbao extends wx{
 
   /**
    * 设置单个红包的金额，类型等，生成红包信息。预下单完成后，需要在72小时内调用jsapi完成抽红包的操作。（红包过期失效后，资金会退回到商户财付通帐号。）

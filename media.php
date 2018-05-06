@@ -2,20 +2,7 @@
 
 use http\request;
 
-class media{
-
-  private $token;
-  
-  final function __construct(string $token, string $host='https://api.weixin.qq.com'){
-    $this->token = $token;
-  }
-
-  private function check(\stdClass $json):\stdClass{
-    if(isset($json->errcode,$json->errmsg)&&$json->errcode)
-      throw new \RuntimeException($json->errmsg,$json->errcode);
-    return $json;
-  }
-
+class media extends wx{
 
   /**
    * 新增临时素材
