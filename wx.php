@@ -1,33 +1,40 @@
 <?php namespace mp; // vim: se fdm=marker:
 
 use http\request;
-use tmp\cache;
 
-class js{
+class wx{
 
-  private $token,$ticket;
-  private static $expires_in=7200;
-  
-  final function __construct(token $token, string $host='https://api.weixin.qq.com'){
+  private $token;
+
+  /**
+   * 在业务代码中才能决定使用哪个appid的token和ticket
+   * 所以这组配置是特定于具体公众号的
+   * 如果要做成通用的样子，必须额外添加判断url来源的逻辑，然后路由到各自适用的appid上
+   * 如果还不行，则需要以appid来hash所有支持的token
+   */
+  function GET():array{
+    return (new wx(new token($_ENV['APPID'],$_ENV['SECRET'])))->config($_SERVER['HTTP_REFERRER']);
+  }
+
+
+  final function __construct(token $token){
     $this->token = $token;
   }
 
 
-  /**
-   * 公众号内嵌网页需要调用JSSDK，首先需要使用token获取ticket，进而计算得到signature
-   * ticket应该在服务端缓存一份，7200秒(两小时)有效期
-   */
-  function ticket():string{
-    return new cache($this->token->appid.__FUNCTION__, $this->secret, self::$expires_in, function(){
-      $result = request::url(self::HOST.'/cgi-bin/ticket/getticket')
-        ->fetch(['access_token'=>$this->token])
-        ->json();
-      if(isset($result->ticket)){
-        self::$expires_in = $result->expires_in;
-        return $result->ticket;
-      }else
-        error_log($result->errmsg);
-    });
+  final function config(string &$url):array{
+    $arr = [
+      'noncestr' => $nonceStr='xxx',
+      'jsapi_ticket' => new ticket($this->token,'jsapi'),
+      'timestamp' => $time=time(),
+      'url' => $url,
+    ];
+    sort($arr,SORT_STRING);
+    return [
+      'timestamp' => $timestamp,
+      'nonceStr' => $nonceStr,
+      'signature' => sha1(http_build_query($arr)),
+    ];
   }
 
 
