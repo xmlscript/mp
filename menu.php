@@ -21,12 +21,6 @@ class menu extends wx{
     }
   }
 
-  private function check(\stdClass $json):\stdClass{
-    if(isset($json->errcode,$json->errmsg)&&$json->errcode)
-      throw new \RuntimeException($json->errmsg,$json->errcode);
-    return $json;
-  }
-
   function get():\stdClass{
     return $this->check(request::url(self::HOST.'/cgi-bin/menu/get')->fetch(['access_token'=>(string)$this->token])->json());
   }

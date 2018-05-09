@@ -10,7 +10,7 @@ final class token{
   private static $expires_in=7200;
   
   function __construct(string $appid, string $secret){
-    [$this->appid,$this->token] = [$appid,new cache($appid.__CLASS__, $secret, self::$expires_in, function($appid,$secret){
+    [$this->appid,$this->token] = [$appid,new cache($appid.__CLASS__, $secret, self::$expires_in, function() use ($appid, $secret){
       $result = request::url(self::HOST.'/cgi-bin/token')
         ->fetch(['grant_type'=>'client_credential','appid'=>$appid,'secret'=>$secret])
         ->json();
