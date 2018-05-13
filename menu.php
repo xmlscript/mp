@@ -11,7 +11,11 @@ use http\request;
  * @todo 纯域名！！！一级域名！
  * @todo 测试号似乎不是个人的，
  */
-class menu extends wx{
+class menu{
+  
+  function __construct(token $token){
+    $this->token = $token;
+  }
 
   function __toString():string{
     try{
@@ -31,11 +35,11 @@ class menu extends wx{
   }
 
   function get():\stdClass{
-    return $this->check(request::url(self::HOST.'/cgi-bin/menu/get')->fetch(['access_token'=>(string)$this->token])->json());
+    return token::check(request::url(token::HOST.'/cgi-bin/menu/get')->fetch(['access_token'=>(string)$this->token])->json());
   }
 
   function trymatch(string $id):\stdClass{
-    return $this->check(request::url(self::HOST.'/cgi-bin/menu/trymatch')
+    return token::check(request::url(token::HOST.'/cgi-bin/menu/trymatch')
       ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['user_id'=>$id]))
@@ -47,7 +51,7 @@ class menu extends wx{
    */
   function get_current_selfmenu_info():\stdClass{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1434698695
-    return $this->check(request::url(self::HOST.'/cgi-bin/get_current_selfmenu_info')->fetch(['access_token'=>(string)$this->token])->json());
+    return token::check(request::url(token::HOST.'/cgi-bin/get_current_selfmenu_info')->fetch(['access_token'=>(string)$this->token])->json());
   }
 
 
@@ -55,7 +59,7 @@ class menu extends wx{
    * @todo 判断不要重复添加，unique
    */
   function addconditional(string $json):string{
-    return $this->check(request::url(self::HOST.'/cgi-bin/menu/addconditional')
+    return token::check(request::url(token::HOST.'/cgi-bin/menu/addconditional')
       ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST($json)
@@ -64,7 +68,7 @@ class menu extends wx{
 
   function create(string $json):bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141013
-    return json_decode($json)&&$this->check(request::url(self::HOST.'/cgi-bin/menu/create')
+    return json_decode($json)&&token::check(request::url(token::HOST.'/cgi-bin/menu/create')
       ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST($json)
@@ -73,17 +77,17 @@ class menu extends wx{
 
   function delete():bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141015
-    return !$this->check(request::url(self::HOST.'/cgi-bin/menu/delete')
+    return !token::check(request::url(token::HOST.'/cgi-bin/menu/delete')
       ->fetch(['access_token'=>(string)$this->token])
       ->json())->errcode;
   }
 
   function delconditional(int $menuid):bool{
-    return $menuid&&$this->check(request::url(self::HOST.'/cgi-bin/menu/delconditional')
+    return !request::url(token::HOST.'/cgi-bin/menu/delconditional')
       ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['menuid'=>$menuid]))
-      ->json());
+      ->json()->errcode;
   }
 
 

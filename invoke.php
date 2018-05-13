@@ -4,6 +4,10 @@ use http\request;
 use tmp\cache;
 
 class invoke{
+  
+  final function __construct(token $token){
+    $this->token = $token;
+  }
 
   /**
    * 调用微信卡券的ticket，又多一个么蛾子。。。

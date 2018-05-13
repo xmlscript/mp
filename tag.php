@@ -2,14 +2,18 @@
 
 use http\request;
 
-class tag extends wx{
+class tag{
+  
+  function __construct(token $token){
+    $this->token = $token;
+  }
 
   /**
    * @param string ...$name 公众号最多100个标签，每个标签限制30字
    */
   function create(string ...$name):array{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140837
-    return $this->check(request::url($this->host.'/cgi-bin/tags/create')
+    return token::check(request::url(token::HOST.'/cgi-bin/tags/create')
       ->query(['access_token'=>$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['tag'=>array_map(function($v){return ['name'=>$v];},$name)]))
@@ -18,7 +22,7 @@ class tag extends wx{
 
 
   function get(string $next_openid=null):array{
-    return $this->check(request::url($this->host.'/cgi-bin/tags/get')
+    return token::check(request::url(token::HOST.'/cgi-bin/tags/get')
       ->fetch(['access_token'=>$this->token])
       ->json())->tags;
 
@@ -26,25 +30,25 @@ class tag extends wx{
 
 
   function update(int $id, string $name):bool{
-    return !$this->check(request::url($this->host.'/cgi-bin/tags/update')
+    return !request::url(token::HOST.'/cgi-bin/tags/update')
       ->query(['access_token'=>$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['tag'=>['id'=>$id,'name'=>$name]]))
-      ->json())->errcode;
+      ->json()->errcode;
   }
 
 
   function delete(int $id):bool{
-    return !$this->check(request::url($this->host.'/cgi-bin/tags/delete')
+    return !request::url(token::HOST.'/cgi-bin/tags/delete')
       ->query(['access_token'=>$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['tag'=>['id'=>$id]]))
-      ->json())->errcode;
+      ->json()->errcode;
   }
 
 
   function get_user(int $id, string $next_openid=''):\stdClass{
-    return $this->check(request::url($this->host.'/cgi-bin/user/tag/get')
+    return token::check(request::url(token::HOST.'/cgi-bin/user/tag/get')
       ->query(['access_token'=>$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['tagid'=>$id,'next_openid'=>$next_openid]))
@@ -56,10 +60,10 @@ class tag extends wx{
    * @param string ...$openid_list 每次最多50人，而且每人最多20个
    */
   function batchtagging(int $id, string ...$openid_list):bool{
-    return $openid_list&&$this->check(request::url($this->host.'/cgi-bin/tags/members/batchtagging')
+    return !request::url(token::HOST.'/cgi-bin/tags/members/batchtagging')
       ->query(['access_token'=>$this->token])
       ->POST(json_encode(['openid_list'=>$openid_list,'tagid'=>$id]))
-      ->json());
+      ->json()->errcode;
   }
 
 
@@ -67,26 +71,26 @@ class tag extends wx{
    * @param string ...$openid_list 每次最多50人
    */
   function batchuntagging(int $id, string ...$openid_list):bool{
-    return $openid_list&&$this->check(request::url($this->host.'/cgi-bin/tags/members/batchuntagging')
+    return !request::url(token::HOST.'/cgi-bin/tags/members/batchuntagging')
       ->query(['access_token'=>$this->token])
       ->POST(json_encode(['openid_list'=>$openid_list,'tagid'=>$id]))
-      ->json());
+      ->json()->errcode;
   }
 
   /**
    * @param string ...$openid 最多20个
    */
   function batchblacklist(string ...$openid_list):bool{
-    return $openid&&$this->check(request::url($this->host.'/cgi-bin/tags/members/batchblacklist')
+    return !request::url(token::HOST.'/cgi-bin/tags/members/batchblacklist')
       ->query(['access_token'=>$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['openid_list'=>$openid_list]))
-      ->json());
+      ->json()->errcode;
   }
 
 
   function getidlist(string $openid):array{
-    return $this->check(request::url($this->host.'/cgi-bin/tags/getidlist')
+    return token::check(request::url(token::HOST.'/cgi-bin/tags/getidlist')
       ->query(['access_token'=>$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['openid'=>$openid]))

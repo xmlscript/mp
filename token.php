@@ -5,24 +5,26 @@ use tmp\cache;
 
 final class token{
 
-  private const HOST = 'https://api.weixin.qq.com';
-  public $appid,$token;
-  private static $expires_in=7200;
+  const HOST = 'https://api.weixin.qq.com';
   
   function __construct(string $appid, string $secret){
-    [$this->appid,$this->token] = [$appid,new cache($appid.__CLASS__, $secret, self::$expires_in, function() use ($appid, $secret){
-      $result = request::url(self::HOST.'/cgi-bin/token')
+    $this->appid = $appid;
+    //$this->secret = $secret; //TODO 生成一个伪key
+    $this->access_token = new cache($appid.__CLASS__, $secret, 7200, function() use ($appid, $secret){
+      return request::url(token::HOST.'/cgi-bin/token')
         ->fetch(['grant_type'=>'client_credential','appid'=>$appid,'secret'=>$secret])
-        ->json();
-      if(isset($result->access_token,$result->expires_in)&&self::$expires_in=$result->expires_in)
-        return $result->access_token;
-      else
-        error_log($result->errmsg);
-    })];
+        ->json()->access_token??null;
+    });
   }
 
   function __toString():string{
-    return $this->token;
+    return $this->access_token;
+  }
+
+  static function check(\stdClass $json):\stdClass{
+    if(isset($json->errcode,$json->errmsg)&&$json->errcode)
+      throw new \RuntimeException($json->errmsg,$json->errcode);
+    return $json;
   }
 
 }

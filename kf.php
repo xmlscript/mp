@@ -2,20 +2,24 @@
 
 use http\request;
 
-class kf extends wx{
+class kf{
+  
+  function __construct(token $token){
+    $this->token = $token;
+  }
 
   function getonlinekflist():array{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1458044813
-    return $this->check(request::url($this->host.'/cgi-bin/customservice/getonlinekflist')
-      ->fetch(['access_token'=>$this->token()])
+    return token::check(request::url(token::HOST.'/cgi-bin/customservice/getonlinekflist')
+      ->fetch(['access_token'=>(string)$this->token])
       ->json())->kf_online_list;
   }
 
 
   function getkflist():array{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140547
-    return $this->check(request::url($this->host.'/cgi-bin/customservice/getkflist')
-      ->fetch(['access_token'=>$this->token()])
+    return token::check(request::url(token::HOST.'/cgi-bin/customservice/getkflist')
+      ->fetch(['access_token'=>(string)$this->token])
       ->json())->kf_list;
   }
 
@@ -27,8 +31,8 @@ class kf extends wx{
    */
   function typing(string $openid, bool $typing):bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140547
-    return $openid&&$this->check(request::url($this->host.'/cgi-bin/message/custom/typing')
-      ->query(['access_token'=>$this->token])
+    return $openid&&token::check(request::url(token::HOST.'/cgi-bin/message/custom/typing')
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['touser'=>$openid,'command'=>$typing?'Typing':'CancelTyping']))
       ->json());
@@ -42,8 +46,8 @@ class kf extends wx{
    */
   function add(string $kf_account, string $nickname):bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1458044813
-    return $kf_account&&$this->check(request::url($this->host.'/cgi-bin/customservice/kfaccount/add')
-      ->query(['access_token'=>$this->token])
+    return $kf_account&&token::check(request::url(token::HOST.'/cgi-bin/customservice/kfaccount/add')
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['kf_account'=>$kf_account,'nickname'=>$nickname]))
       ->json());
@@ -55,8 +59,8 @@ class kf extends wx{
    */
   function add2(string $kf_account, string $nickname, string $password):bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140547
-    return $kf_account&&$this->check(request::url($this->host.'/customservice/kfaccount/add')
-      ->query(['access_token'=>$this->token])
+    return $kf_account&&token::check(request::url(token::HOST.'/customservice/kfaccount/add')
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['kf_account'=>$kf_account,'nickname'=>$nickname,'password'=>md5($password)]))
       ->json());
@@ -69,8 +73,8 @@ class kf extends wx{
    * 尚未绑定微信号的帐号可以进行绑定邀请操作，邀请未失效时不能对该帐号进行再次绑定微信号邀请。
    */
   function inviteworker(string $kf_account, string $invite_wx):bool{
-    return $kf_account&&$this->check(request::url($this->host.'/cgi-bin/customservice/kfaccount/inviteworker')
-      ->query(['access_token'=>$this->token])
+    return $kf_account&&token::check(request::url(token::HOST.'/cgi-bin/customservice/kfaccount/inviteworker')
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['kf_account'=>$kf_account,'invite_wx'=>$invite_wx]))
       ->json());
@@ -78,8 +82,8 @@ class kf extends wx{
 
 
   function update(string $kf_account, string $nickname):bool{
-    return $kf_account&&$this->check(request::url($this->host.'/cgi-bin/customservice/kfaccount/update')
-      ->query(['access_token'=>$this->token])
+    return $kf_account&&token::check(request::url(token::HOST.'/cgi-bin/customservice/kfaccount/update')
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['kf_account'=>$kf_account,'nickname'=>$nickname]))
       ->json());
@@ -87,16 +91,16 @@ class kf extends wx{
 
 
   function uploadheadimg(string $kf_account):bool{
-    return $kf_account&&$this->check(request::url($this->host.'/cgi-bin/customservice/kfaccount/uploadheadimg')
-      ->query(['access_token'=>$this->token,'kf_account',$kf_account])
+    return $kf_account&&token::check(request::url(token::HOST.'/cgi-bin/customservice/kfaccount/uploadheadimg')
+      ->query(['access_token'=>(string)$this->token,'kf_account',$kf_account])
       ->upload()//FIXME form-data 中媒体文件标识，有filename、filelength、content-type 等信息，文件大小为5M 以内
       ->json());
   }
 
 
   function del(string $kf_account):bool{
-    return $kf_account&&$this->check(request::url($this->host.'/cgi-bin/customservice/del')
-      ->fetch(['access_token'=>$this->token,'kf_account'=>$kf_account])
+    return $kf_account&&token::check(request::url(token::HOST.'/cgi-bin/customservice/del')
+      ->fetch(['access_token'=>(string)$this->token,'kf_account'=>$kf_account])
       ->json());
   }
 
@@ -106,8 +110,8 @@ class kf extends wx{
    */
   function del2(string $kf_account,string $nickname, string $password):bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140547
-    return $kf_account&&$this->check(request::url($this->host.'/customservice/del')
-      ->fetch(['access_token'=>$this->token])
+    return $kf_account&&token::check(request::url(token::HOST.'/customservice/del')
+      ->fetch(['access_token'=>(string)$this->token])
       ->POST(json_encode(['kf_account'=>$kf_account,'nickname'=>$nickname,'password'=>md5($password)]))
       ->json());
   }
@@ -115,8 +119,8 @@ class kf extends wx{
 
   function create(string $kf_account, string $openid):bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1458044820
-    return $kf_account&&$this->check(request::url($this->host.'/cgi-bin/customservice/kfsession/create')
-      ->query(['access_token'=>$this->token])
+    return $kf_account&&token::check(request::url(token::HOST.'/cgi-bin/customservice/kfsession/create')
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['kf_account'=>$kf_account,'openid'=>$openid]))
       ->json());
@@ -125,8 +129,8 @@ class kf extends wx{
 
   function close(string $kf_account, string $openid):bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1458044820
-    return $kf_account&&$this->check(request::url($this->host.'/cgi-bin/customservice/kfsession/close')
-      ->query(['access_token'=>$this->token])
+    return $kf_account&&token::check(request::url(token::HOST.'/cgi-bin/customservice/kfsession/close')
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['kf_account'=>$kf_account,'openid'=>$openid]))
       ->json());
@@ -135,24 +139,24 @@ class kf extends wx{
 
   function getsession(string $openid):\stdClass{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1458044820
-    return $this->check(request::url($this->host.'/cgi-bin/customservice/kfsession/getsession')
-      ->fetch(['access_token'=>$this->token,'openid'=>$openid])
+    return token::check(request::url(token::HOST.'/cgi-bin/customservice/kfsession/getsession')
+      ->fetch(['access_token'=>(string)$this->token,'openid'=>$openid])
       ->json());
   }
 
 
   function getsessionlist(string $kf_account):array{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1458044820
-    return $this->check(request::url($this->host.'/cgi-bin/customservice/kfsession/getsessionlist')
-      ->fetch(['access_token'=>$this->token,'kf_account'=>$kf_account])
+    return token::check(request::url(token::HOST.'/cgi-bin/customservice/kfsession/getsessionlist')
+      ->fetch(['access_token'=>(string)$this->token,'kf_account'=>$kf_account])
       ->json())->sessionlist;
   }
 
 
   function getwaitcase():array{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1458044820
-    return $this->check(request::url($this->host.'/cgi-bin/customservice/kfsession/getwaitcase')
-      ->fetch(['access_token'=>$this->token])
+    return token::check(request::url(token::HOST.'/cgi-bin/customservice/kfsession/getwaitcase')
+      ->fetch(['access_token'=>(string)$this->token])
       ->json())->waitcaselist;
   }
 
@@ -165,8 +169,8 @@ class kf extends wx{
    */
   function getmsglist(\DateTime $starttime, \DateTime $endtime, int $msgid=1, int $number=10000):\stdClass{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1464937269_mUtmK
-    return $this->check(request::url($this->host.'/cgi-bin/customservice/msgrecord/getmsglist')
-      ->query(['access_token'=>$this->token])
+    return token::check(request::url(token::HOST.'/cgi-bin/customservice/msgrecord/getmsglist')
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['starttime'=>$starttime,'endtime'=>$endtime,'msgid'=>$msgid,'number'=>$number]))
       ->json());

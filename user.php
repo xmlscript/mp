@@ -2,7 +2,11 @@
 
 use http\request;
 
-class user extends wx{
+class user{
+  
+  function __construct(token $token){
+    $this->token = $token;
+  }
 
   /**
    * 这个接口设计的特别幼稚
@@ -13,7 +17,7 @@ class user extends wx{
    */
   function get(string $next_openid=null):\stdClass{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140840
-    return $this->check(request::url(self::HOST.'/cgi-bin/user/get')
+    return token::check(request::url(token::HOST.'/cgi-bin/user/get')
       ->fetch(['access_token'=>(string)$this->token,'next_openid'=>$next_openid])
       ->json());
 
@@ -28,7 +32,7 @@ class user extends wx{
 
   function info(string $openid):\stdClass{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140839
-    return $this->check(request::url(self::HOST.'/cgi-bin/user/info')
+    return token::check(request::url(token::HOST.'/cgi-bin/user/info')
       ->fetch(['access_token'=>(string)$this->token,'openid'=>$openid,'lang'=>'zh_CN'])
       ->json());
   }
@@ -36,7 +40,7 @@ class user extends wx{
 
   function batchget(string ...$openid):array{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140839
-    return $this->check(request::url(self::HOST.'/cgi-bin/user/info/batchget')
+    return token::check(request::url(token::HOST.'/cgi-bin/user/info/batchget')
       ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['user_list'=>array_map(function($v){return ['openid'=>$v];},$openid)]))
@@ -46,10 +50,10 @@ class user extends wx{
 
   function updateremark(string $openid, string $str):bool{#
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140838
-    return request::url(self::HOST.'/cgi-bin/user/info/updateremark')
+    return !request::url(token::HOST.'/cgi-bin/user/info/updateremark')
       ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['openid'=>$openid,'remark'=>$str]))
-      ->json();
+      ->json()->errcode;
   }
 
   /**
@@ -57,11 +61,11 @@ class user extends wx{
    */
   function batchblacklist(string ...$openid_list):bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1471422259_pJMWA
-    return $openid&&$this->check(request::url(self::HOST.'/cgi-bin/tags/members/batchblacklist')
+    return !request::url(token::HOST.'/cgi-bin/tags/members/batchblacklist')
       ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['openid_list'=>$openid_list]))
-      ->json());
+      ->json()->errcode;
   }
 
   /**
@@ -69,11 +73,11 @@ class user extends wx{
    */
   function batchunblacklist(string ...$openid_list):bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1471422259_pJMWA
-    return $openid&&$this->check(request::url(self::HOST.'/cgi-bin/tags/members/batchunblacklist')
+    return !request::url(token::HOST.'/cgi-bin/tags/members/batchunblacklist')
       ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['openid_list'=>$openid_list]))
-      ->json());
+      ->json()->errcode;
   }
 
 }

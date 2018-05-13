@@ -2,16 +2,20 @@
 
 use http\request;
 
-class tpl extends wx{
+class tpl{
+  
+  function __construct(token $token){
+    $this->token = $token;
+  }
 
   /**
    * 获取可用的消息模板
    * @todo 获取模板，不能和发送模板消息合并吗？？？
    */
   function template():array{
-    return request::url($this->host.'/cgi-bin/template/get_all_private_template')
+    return token::check(request::url(token::HOST.'/cgi-bin/template/get_all_private_template')
       ->fetch(['access_token'=>$this->token()])
-      ->json();
+      ->json());
   }
 
 
@@ -25,9 +29,9 @@ class tpl extends wx{
    *   string $pagepath 所需跳转到小程序的具体页面路径，支持带参数,（示例index?foo=bar）
    * @param array &$data 模板数据
    */
-  function 发送模板消息(string $openid, string $template_id, string $url, array &$data, array $miniprogram=null):\stdClass{#
+  function 发送模板消息(string $openid, string $template_id, string $url, array &$data, array $miniprogram=null):\stdClass{
     //TODO: 没有彻底封装
-    return request::url($this->host.'/cgi-bin/message/template/send')
+    return token::check(request::url(token::HOST.'/cgi-bin/message/template/send')
       ->query(['access_token'=>$this->token()])
       ->timeout($this->timeout)
       ->POST(json_encode([
@@ -35,7 +39,7 @@ class tpl extends wx{
         'template_id'=>$template_id,
         'url'=>$url,
         'data'=>$data
-      ]));
+      ])));
   }
 
 }

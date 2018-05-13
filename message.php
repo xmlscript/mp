@@ -2,15 +2,19 @@
 
 use http\request;
 
-class message extends wx{
+class message{
+  
+  function __construct(token $token){
+    $this->token = $token;
+  }
 
   /**
    * 暂时不知道返回什么数据
    */
   function send(string $openid, string $msgtype, array $content, string $kf_account=''):\stdClass{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140547
-    return $this->check(request::url($this->host.'/cgi-bin/message/custom/send')
-      ->query(['access_token'=>$this->token])
+    return token::check(request::url(token::HOST.'/cgi-bin/message/custom/send')
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['to_user'=>$openid,'msgtype'=>$msgtype,$msgtype=>$content,'customservice'=>['kf_account'=>$kf_account]]))
       ->json());
@@ -22,11 +26,11 @@ class message extends wx{
    */
   function sends(string $msgtype, array $content, string ...$openid):bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1481187827_i0l21
-    return $openid&&$this->check(request::url(self::HOST.'/cgi-bin/message/mess/send')//仅认证服务号可用,而订阅号不可用
-      ->query(['access_token'=>$this->token])
+    return !request::url(token::HOST.'/cgi-bin/message/mess/send')//仅认证服务号可用,而订阅号不可用
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['touser'=>$openid,'msgtype'=>$msgtype,$msgtype=>$content]))
-      ->json());
+      ->json()->errcode;
   }
 
 
@@ -36,11 +40,11 @@ class message extends wx{
    */
   function sendall(string $msgtype, array $content, string $tag_id, bool $send_ignore_reprint=false):bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1481187827_i0l21
-    return $openid&&$this->check(request::url(self::HOST.'/cgi-bin/message/mess/sendall')//仅认证后可用
-      ->query(['access_token'=>$this->token])
+    return !request::url(token::HOST.'/cgi-bin/message/mess/sendall')//仅认证后可用
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['msgtype'=>$msgtype,$msgtype=>$content,'filter'=>['is_to_all'=>false,'tag_id'=>$tag_id],'send_ignore_reprint'=>(int)$send_ignore_reprint]))
-      ->json());
+      ->json()->errcode;
   }
 
   /**
@@ -50,11 +54,11 @@ class message extends wx{
    */
   function delete(int $msg_id, int $article_idx):bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1481187827_i0l21
-    return $msg_id&&$this->check(request::url(self::HOST.'/cgi-bin/message/mess/delete')
-      ->query(['access_token'=>$this->token])
+    return !request::url(token::HOST.'/cgi-bin/message/mess/delete')
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['msg_id'=>$msg_id,$article_idx=>$article_idx]))
-      ->json());
+      ->json()->errcode;
   }
 
 
@@ -65,11 +69,11 @@ class message extends wx{
    */
   function preview(string $touser, string $msgtype, array $content):bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1481187827_i0l21
-    return $content&&$this->check(request::url(self::HOST.'/cgi-bin/message/mess/preview')
-      ->query(['access_token'=>$this->token])
+    return !request::url(token::HOST.'/cgi-bin/message/mess/preview')
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['touser'=>$touser,'msgtype'=>$msgtype,$msgtype=>$content]))
-      ->json());
+      ->json()->errcode;
   }
 
 
@@ -78,8 +82,8 @@ class message extends wx{
    */
   function get(int $msg_id):string{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1481187827_i0l21
-    return $this->check(request::url(self::HOST.'/cgi-bin/message/mess/get')
-      ->query(['access_token'=>$this->token])
+    return token::check(request::url(token::HOST.'/cgi-bin/message/mess/get')
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['msg_id'=>$msg_id]))
       ->json())->msg_status;
@@ -88,8 +92,8 @@ class message extends wx{
 
   function speed_get():\stdClass{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1481187827_i0l21
-    return $this->check(request::url(self::HOST.'/cgi-bin/message/mess/speed/get')
-      ->query(['access_token'=>$this->token])
+    return token::check(request::url(token::HOST.'/cgi-bin/message/mess/speed/get')
+      ->query(['access_token'=>(string)$this->token])
       ->POST()
       ->json());
   }
@@ -101,8 +105,8 @@ class message extends wx{
    */
   function speed_set(int $speed):\stdClass{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1481187827_i0l21
-    return $this->check(request::url(self::HOST.'/cgi-bin/message/mess/speed/set')
-      ->query(['access_token'=>$this->token])
+    return token::check(request::url(token::HOST.'/cgi-bin/message/mess/speed/set')
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['speed'=>$speed]))
       ->json());
@@ -118,7 +122,7 @@ class message extends wx{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1500374289_66bvB
    */
   function subscribemsg(int $scene, string $template_id, string $redirect_url, string $reserved):string{
-    return request::url('https://mp.weixin.qq.com/mp/subscribemsg')
+    return request::url(token::HOST.'/mp/subscribemsg')
       ->query([
         'action'=>'get_confirm',
         'appid'=>$this->token->appid,

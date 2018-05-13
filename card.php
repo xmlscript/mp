@@ -12,7 +12,11 @@ use http\request;
  *  - url 二维码解析的实际内容，开发者可以自行生成个性化的二维码
  *  - show_qrcode_url 已经拼装好了的showqrcode网址，真是让人精神分裂。。。
  */
-class card extends wx{
+class card{
+  
+  function __construct(token $token){
+    $this->token = $token;
+  }
 
   /**
    * @param array $mixed 非常复杂的结构
@@ -23,7 +27,7 @@ class card extends wx{
    *  - 优惠券 GENERAL_COUPON
    */
   function create(array $mixed):string{
-    return $this->check(request::url(self::HOST.'/card/create')
+    return token::check(request::url(token::HOST.'/card/create')
       ->query(['access_token'=>$this->token])
       ->header('Content-Type','application/json')
       ->POST(json_encode(['card'=>$mixed]))//FIXME 比较麻烦
@@ -47,7 +51,7 @@ class card extends wx{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1451025062
    */
   function qrcode(string $card_id):\stdClass{
-    return $this->check(request::url(self::HOST.'/card/qrcode/create')
+    return token::check(request::url(token::HOST.'/card/qrcode/create')
       ->query(['access_token'=>$this->token])
       ->header('Content-Type','application/json')
       ->POST(json_encode(['action_name'=>'QR_CARD|QR_MULTIPLE_CARD']))//FIXME 比较麻烦

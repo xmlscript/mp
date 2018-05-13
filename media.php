@@ -2,7 +2,11 @@
 
 use http\request;
 
-class media extends wx{
+class media{
+  
+  function __construct(token $token){
+    $this->token = $token;
+  }
 
   /**
    * 新增临时素材
@@ -10,8 +14,8 @@ class media extends wx{
    */
   function upload(string $type):\stdClass{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738726
-    return $this->check(request::url(self::HOST.'/cgi-bin/media/upload')
-      ->query(['access_token'=>$this->token,'type'=>$type])
+    return token::check(request::url(token::HOST.'/cgi-bin/media/upload')
+      ->query(['access_token'=>(string)$this->token,'type'=>$type])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->upload()//TODO 
       ->json());
@@ -23,8 +27,8 @@ class media extends wx{
    */
   function get(string $media_id):\stdClass{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738727
-    return $this->check(request::url(self::HOST.'/cgi-bin/media/get')
-      ->fetch(['access_token'=>$this->token,'type'=>$type])
+    return token::check(request::url(token::HOST.'/cgi-bin/media/get')
+      ->fetch(['access_token'=>(string)$this->token,'type'=>$type])
       ->json());
   }
 
@@ -34,8 +38,8 @@ class media extends wx{
    */
   function get_material(string $media_id):\stdClass{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738730
-    return $this->check(request::url(self::HOST.'/cgi-bin/material/get_material')
-      ->query(['access_token'=>$this->token])
+    return token::check(request::url(token::HOST.'/cgi-bin/material/get_material')
+      ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['media_id'=>$media_id]))
       ->json());
   }
@@ -46,10 +50,10 @@ class media extends wx{
    */
   function del_material(string $media_id):bool{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738731
-    return $media_id&&$this->check(request::url(self::HOST.'/cgi-bin/material/del_material')
-      ->query(['access_token'=>$this->token])
+    return !request::url(token::HOST.'/cgi-bin/material/del_material')
+      ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['media_id'=>$media_id]))
-      ->json());
+      ->json()->errcode;
   }
 
 
@@ -60,17 +64,17 @@ class media extends wx{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
   function update_material(string $media_id, int $index=0, array $arr):bool{
-    return $media_id&&$this->check(request::url(self::HOST.'/cgi-bin/material/update_material')
-      ->query(['access_token'=>$this->token])
+    return !request::url(token::HOST.'/cgi-bin/material/update_material')
+      ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['media_id'=>$media_id,'index'=>$index,'articles'=>$arr,'need_open_comment'=>(int)$need_open_comment,'only_fans_can_comment'=>(int)$only_fans_can_comment]))
-      ->json());
+      ->json()->errcode;
   }
 
 
   function get_materialcount():\stdClass{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738733
-    return $media_id&&$this->check(request::url(self::HOST.'/cgi-bin/material/get_materialcount')
-      ->fetch(['access_token'=>$this->token])
+    return token::check(request::url(token::HOST.'/cgi-bin/material/get_materialcount')
+      ->fetch(['access_token'=>(string)$this->token])
       ->json());
   }
 
@@ -83,8 +87,8 @@ class media extends wx{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
   function batchget_material(string $type, int $offset=0, int $count=20):\stdClass{
-    return $media_id&&$this->check(request::url(self::HOST.'/cgi-bin/material/batchget_material')
-      ->query(['access_token'=>$this->token])
+    return token::check(request::url(token::HOST.'/cgi-bin/material/batchget_material')
+      ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['type'=>$type,'offset'=>$offset,'count'=>$count,'need_open_comment'=>(int)$need_open_comment,'only_fans_can_comment'=>(int)$only_fans_can_comment]))
       ->json());
   }
@@ -97,8 +101,8 @@ class media extends wx{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
   function open(int $msg_data_id, int $index=0):bool{
-    return $msg_data_id&&$this->check(request::url(self::HOST.'/cgi-bin/comment/open')
-      ->query(['access_token'=>$this->token])
+    return $msg_data_id&&token::check(request::url(token::HOST.'/cgi-bin/comment/open')
+      ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['msg_data_id'=>$msg_data_id,'index'=>$index]))
       -json());
   }
@@ -111,8 +115,8 @@ class media extends wx{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
   function close(int $msg_data_id, int $index=0):bool{
-    return $msg_data_id&&$this->check(request::url(self::HOST.'/cgi-bin/comment/close')
-      ->query(['access_token'=>$this->token])
+    return $msg_data_id&&token::check(request::url(token::HOST.'/cgi-bin/comment/close')
+      ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['msg_data_id'=>$msg_data_id,'index'=>$index]))
       -json());
   }
@@ -128,8 +132,8 @@ class media extends wx{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
   function list(int $msg_data_id, int $begin, int $count, int $type, int $index=0):\stdClass{
-    return $this->check(request::url(self::HOST.'/cgi-bin/comment/list')
-      ->query(['access_token'=>$this->token])
+    return token::check(request::url(token::HOST.'/cgi-bin/comment/list')
+      ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['msg_data_id'=>$msg_data_id,'index'=>$index]))
       -json());
   }
@@ -140,8 +144,8 @@ class media extends wx{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
   function markelect(int $msg_data_id, int $index, int $user_comment_id):bool{
-    return $msg_data_id&&$this->check(request::url(self::HOST.'/cgi-bin/comment/markelect')
-      ->query(['access_token'=>$this->token])
+    return $msg_data_id&&token::check(request::url(token::HOST.'/cgi-bin/comment/markelect')
+      ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['msg_data_id'=>$msg_data_id,'index'=>$index,'user_comment_id'=>$user_comment_id]))
       -json());
   }
@@ -152,8 +156,8 @@ class media extends wx{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
   function unmarkelect(int $msg_data_id, int $index, int $user_comment_id):bool{
-    return $msg_data_id&&$this->check(request::url(self::HOST.'/cgi-bin/comment/unmarkelect')
-      ->query(['access_token'=>$this->token])
+    return $msg_data_id&&token::check(request::url(token::HOST.'/cgi-bin/comment/unmarkelect')
+      ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['msg_data_id'=>$msg_data_id,'index'=>$index,'user_comment_id'=>$user_comment_id]))
       -json());
   }
@@ -164,8 +168,8 @@ class media extends wx{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
   function delete(int $msg_data_id, int $index, int $user_comment_id):bool{
-    return $msg_data_id&&$this->check(request::url(self::HOST.'/cgi-bin/comment/delete')
-      ->query(['access_token'=>$this->token])
+    return $msg_data_id&&token::check(request::url(token::HOST.'/cgi-bin/comment/delete')
+      ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['msg_data_id'=>$msg_data_id,'index'=>$index,'user_comment_id'=>$user_comment_id]))
       -json());
   }
@@ -176,8 +180,8 @@ class media extends wx{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
   function reply_add(int $msg_data_id, int $user_comment_id, string $content, int $index=0):bool{
-    return $msg_data_id&&$this->check(request::url(self::HOST.'/cgi-bin/comment/reply/add')
-      ->query(['access_token'=>$this->token])
+    return $msg_data_id&&token::check(request::url(token::HOST.'/cgi-bin/comment/reply/add')
+      ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['msg_data_id'=>$msg_data_id,'index'=>$index,'user_comment_id'=>$user_comment_id,'content'=>$content]))
       -json());
   }
@@ -188,8 +192,8 @@ class media extends wx{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
   function reply_delete(int $msg_data_id, int $user_comment_id, int $index=0):bool{
-    return $msg_data_id&&$this->check(request::url(self::HOST.'/cgi-bin/comment/reply/delete')
-      ->query(['access_token'=>$this->token])
+    return $msg_data_id&&token::check(request::url(token::HOST.'/cgi-bin/comment/reply/delete')
+      ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['msg_data_id'=>$msg_data_id,'index'=>$index,'user_comment_id'=>$user_comment_id]))
       -json());
   }
@@ -210,8 +214,8 @@ class media extends wx{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
   function add_news():\stdClass{
-    return $this->check(request::url(self::HOST.'/cgi-bin/material/add_news')
-      ->query(['access_token'=>$this->token])
+    return token::check(request::url(token::HOST.'/cgi-bin/material/add_news')
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST()
       ->json());
@@ -225,8 +229,8 @@ class media extends wx{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1481187827_i0l21
    */
   function uploadimg():string{
-    return $this->check(request::url(self::HOST.'/cgi-bin/media/uploadimg')
-      ->query(['access_token'=>$this->token])
+    return token::check(request::url(token::HOST.'/cgi-bin/media/uploadimg')
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->upload()//TODO 
       ->json())->url;
@@ -237,8 +241,8 @@ class media extends wx{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738729
    */
   function add_material(string $type):string{
-    return $this->check(request::url(self::HOST.'/cgi-bin/material/add_material')
-      ->query(['access_token'=>$this->token,'type'=>$type])
+    return token::check(request::url(token::HOST.'/cgi-bin/material/add_material')
+      ->query(['access_token'=>(string)$this->token,'type'=>$type])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->upload()//TODO 
       ->json())->url;
@@ -247,8 +251,8 @@ class media extends wx{
 
   function uploadnews(array ...$news):string{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1481187827_i0l21
-    return $this->check(request::url(self::HOST.'/cgi-bin/media/uploadnews')
-      ->query(['access_token'=>$this->token])
+    return token::check(request::url(token::HOST.'/cgi-bin/media/uploadnews')
+      ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['articles'=>$news]))
       ->json())->url;

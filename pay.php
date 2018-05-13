@@ -1,9 +1,12 @@
 <?php namespace mp; // vim: se fdm=marker:
 
 use http\request;
-use tmp\cache;
 
-class pay extends wx{
+class pay{
+  
+  function __construct(token $token){
+    $this->token = $token;
+  }
 
   /**
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115
