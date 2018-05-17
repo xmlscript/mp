@@ -112,7 +112,7 @@ class media{
     return token::check(request::url(token::HOST.'/cgi-bin/material/add_news')
       ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
-      ->POST(json_encode(['articles'=>$article))
+      ->POST(json_encode(['articles'=>$article]))
       ->json());
   }
 
@@ -135,7 +135,21 @@ class media{
   /**
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738729
    */
-  function add_material(string $type):string{
+  function add_material(string $file):string{
+    //TODO 首先检测文件类型，允许image, voice, video, thumb
+    //TODO 图片不超过5mb，有可能被设置为自动添加水印
+    //TODO voice支持mp3,wma,wav,amr，30mb之内，30sec之内，额外附带14字标题和分类
+    //TODO 视频20mb之内，1sec到10h之内，视频格式：
+    // mp4, flv, f4v, webm
+    // m4v, mov, 3gp, 3g2
+    // rm, rmvb
+    // wmv, avi, asf
+    // mpg, mpeg, mpe, ts
+    // div, dv, divx
+    // vob, dat, mkv, swf, lavf, cpk, dirac, ram, qt, fli, flc, mod
+    // mp3, aac, ac3, wav, m4a, ogg
+    //TODO 视频额外需要设置：标题，封面，分类， 介绍语
+    //FIXME 什么是小视频？？？15sec那种吗？？？
     return token::check(request::url(token::HOST.'/cgi-bin/material/add_material')
       ->query(['access_token'=>(string)$this->token,'type'=>$type])
       ->header('Content-Type','application/json;charset=UTF-8')
