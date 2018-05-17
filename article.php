@@ -2,46 +2,10 @@
 
 use http\request;
 
-class media{
+class article{
   
   function __construct(token $token){
     $this->token = $token;
-  }
-
-  /**
-   * 新增临时素材
-   * @param string $type image, voice, video, thumb
-   */
-  function upload(string $type):\stdClass{
-    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738726
-    return token::check(request::url(token::HOST.'/cgi-bin/media/upload')
-      ->query(['access_token'=>(string)$this->token,'type'=>$type])
-      ->header('Content-Type','application/json;charset=UTF-8')
-      ->upload()//TODO 
-      ->json());
-  }
-
-
-  /**
-   * 获取临时素材
-   */
-  function get(string $media_id):\stdClass{
-    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738727
-    return token::check(request::url(token::HOST.'/cgi-bin/media/get')
-      ->fetch(['access_token'=>(string)$this->token,'type'=>$type])
-      ->json());
-  }
-
-
-  /**
-   * 获取永久素材
-   */
-  function get_material(string $media_id):\stdClass{
-    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738730
-    return token::check(request::url(token::HOST.'/cgi-bin/material/get_material')
-      ->query(['access_token'=>(string)$this->token])
-      ->POST(json_encode(['media_id'=>$media_id]))
-      ->json());
   }
 
 
@@ -68,14 +32,6 @@ class media{
       ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['media_id'=>$media_id,'index'=>$index,'articles'=>$arr,'need_open_comment'=>(int)$need_open_comment,'only_fans_can_comment'=>(int)$only_fans_can_comment]))
       ->json()->errcode;
-  }
-
-
-  function get_materialcount():\stdClass{
-    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738733
-    return token::check(request::url(token::HOST.'/cgi-bin/material/get_materialcount')
-      ->fetch(['access_token'=>(string)$this->token])
-      ->json());
   }
 
 
@@ -117,39 +73,26 @@ class media{
   }
 
 
-  /**
-   * 本接口所上传的图片不占用公众号的素材库中图片数量的5000个的限制。
-   * 图片仅支持jpg/png格式，大小必须在1MB以下。
-   * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738729
-   * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1481187827_i0l21
-   */
-  function uploadimg():string{
-    return token::check(request::url(token::HOST.'/cgi-bin/media/uploadimg')
-      ->query(['access_token'=>(string)$this->token])
-      ->header('Content-Type','application/json;charset=UTF-8')
-      ->upload()//TODO 
-      ->json())->url;
-  }
-
-
-  /**
-   * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738729
-   */
-  function add_material(string $type):string{
-    return token::check(request::url(token::HOST.'/cgi-bin/material/add_material')
-      ->query(['access_token'=>(string)$this->token,'type'=>$type])
-      ->header('Content-Type','application/json;charset=UTF-8')
-      ->upload()//TODO 
-      ->json())->url;
-  }
-
-
   function uploadnews(array ...$news):string{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1481187827_i0l21
     return token::check(request::url(token::HOST.'/cgi-bin/media/uploadnews')
       ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
       ->POST(json_encode(['articles'=>$news]))
+      ->json())->url;
+  }
+
+
+  /**
+   * 本接口所上传的图片不占用公众号的素材库中图片数量的5000个的限制。
+   * 图片仅支持jpg/png格式，大小必须在1MB以下。
+   * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738729
+   * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1481187827_i0l21
+   */
+  function uploadimg(string $image):string{
+    return token::check(request::url(token::HOST.'/cgi-bin/media/uploadimg')
+      ->query(['access_token'=>(string)$this->token])
+      ->upload()//TODO 
       ->json())->url;
   }
 

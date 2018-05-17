@@ -27,4 +27,12 @@ final class token{
     return $json;
   }
 
+  function article():article{
+    return new article($this);
+  }
+
+  function tpl():tpl{
+    return new tpl($this);
+  }
+
 }
