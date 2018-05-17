@@ -35,4 +35,8 @@ final class token{
     return new tpl($this);
   }
 
+  function ip():ip{
+    return new ip($this);
+  }
+
 }

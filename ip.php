@@ -2,20 +2,39 @@
 
 use http\request;
 
-class ip{
+class ip implements \ArrayAccess, \Countable{
   
   function __construct(token $token){
-    $this->token = $token;
+    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140187
+    foreach(token::check(request::url(token::HOST.'/cgi-bin/getcallbackip')
+      ->fetch(['access_token'=>(string)$token])
+      ->json())->ip_list as $k=>$v)
+      $this->$k = $v;
   }
 
-  /**
-   * 获取官方ip
-   */
-  function getcallbackip():array{
-    https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140187
-    return token::check(request::url(token::HOST.'/cgi-bin/getcallbackip')
-      ->fetch(['access_token'=>(string)$this->token])
-      ->json())->ip_list;
+
+  function __toString():string{
+    return join(PHP_EOL,$this);
+  }
+
+  function count():int{
+    return count((array)$this);
+  }
+
+  function offsetExist($offset){
+    return isset($this->$offset);
+  }
+
+  function offsetSet($offset, $value){
+    $this->$offset = $value;
+  }
+
+  function offsetGet($offset){
+    return $this->$offset;
+  }
+
+  function offsetUnset($offset){
+    unset($this->$offset);
   }
 
 }
