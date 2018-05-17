@@ -89,7 +89,7 @@ class media{
   function batchget_material(string $type, int $offset=0, int $count=20):\stdClass{
     return token::check(request::url(token::HOST.'/cgi-bin/material/batchget_material')
       ->query(['access_token'=>(string)$this->token])
-      ->POST(json_encode(['type'=>$type,'offset'=>$offset,'count'=>$count,'need_open_comment'=>(int)$need_open_comment,'only_fans_can_comment'=>(int)$only_fans_can_comment]))
+      ->POST(json_encode(['type'=>$type,'offset'=>$offset,'count'=>$count]))
       ->json());
   }
 
@@ -108,11 +108,11 @@ class media{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738729
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
-  function add_news():\stdClass{
+  function add_news(article ...$article):\stdClass{
     return token::check(request::url(token::HOST.'/cgi-bin/material/add_news')
       ->query(['access_token'=>(string)$this->token])
       ->header('Content-Type','application/json;charset=UTF-8')
-      ->POST()
+      ->POST(json_encode(['articles'=>$article))
       ->json());
   }
 
