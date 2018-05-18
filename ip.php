@@ -14,14 +14,14 @@ class ip implements \ArrayAccess, \Countable{
 
 
   function __toString():string{
-    return join(PHP_EOL,$this);
+    return join(PHP_EOL,(array)$this);
   }
 
   function count():int{
     return count((array)$this);
   }
 
-  function offsetExist($offset){
+  function offsetExists($offset){
     return isset($this->$offset);
   }
 

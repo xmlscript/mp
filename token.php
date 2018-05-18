@@ -47,4 +47,12 @@ final class token{
     return new media($this);
   }
 
+  function menu():menu{
+    return new menu($this);
+  }
+
+  function user():user{
+    return new user($this);
+  }
+
 }
