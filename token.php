@@ -11,10 +11,11 @@ final class token{
 
     $cache = new cache($appid.__CLASS__, $secret, 7200);
 
-    $this->access_token = (string)$cache?:
-    (string)$cache(token::check(request::url(token::HOST.'/cgi-bin/token')
-      ->fetch(['grant_type'=>'client_credential','appid'=>$appid,'secret'=>$secret])
-      ->json())->access_token);
+    $this->access_token = $cache->valid()?
+      $cache:
+      $cache(token::check(request::url(token::HOST.'/cgi-bin/token')
+        ->fetch(['grant_type'=>'client_credential','appid'=>$appid,'secret'=>$secret])
+        ->json())->access_token);
 
     $this->appid = $appid;
     //$this->secret = $secret; //TODO 生成一个伪key
@@ -40,6 +41,10 @@ final class token{
 
   function ip():ip{
     return new ip($this);
+  }
+
+  function media():media{
+    return new media($this);
   }
 
 }
