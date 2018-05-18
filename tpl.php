@@ -47,7 +47,6 @@ class tpl{
     //TODO: 没有彻底封装
     return token::check(request::url(token::HOST.'/cgi-bin/message/template/send')
       ->query(['access_token'=>(string)$this->token])
-      ->timeout($this->timeout)
       ->POST(json_encode([
         'touser'=>$openid,
         'template_id'=>$template_id,
