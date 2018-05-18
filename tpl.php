@@ -51,7 +51,7 @@ class tpl{
         'touser'=>$openid,
         'template_id'=>$template_id,
         'url'=>$url,
-        'data'=>json_encode($data)
+        'data'=>$data
       ], JSON_UNESCAPED_UNICODE)))->msgid;
   }
 
