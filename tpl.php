@@ -43,7 +43,7 @@ class tpl{
    *   string $pagepath 所需跳转到小程序的具体页面路径，支持带参数,（示例index?foo=bar）
    * @param array &$data 模板数据
    */
-  function 发送模板消息(string $openid, string $template_id, string $url, array $data, array $miniprogram=null):int{
+  function 发送模板消息(string $openid, string $template_id, string $url, array $data, array $miniprogram=null){
     //TODO: 没有彻底封装
     return token::check(request::url(token::HOST.'/cgi-bin/message/template/send')
       ->query(['access_token'=>(string)$this->token])
@@ -52,7 +52,8 @@ class tpl{
         'template_id'=>$template_id,
         'url'=>$url,
         'data'=>$data
-      ], JSON_UNESCAPED_UNICODE)))->msgid;
+      ], JSON_UNESCAPED_UNICODE))
+      ->json())->msgid;
   }
 
 }
