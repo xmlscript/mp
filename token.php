@@ -11,9 +11,9 @@ final class token{
     $this->appid = $appid;
     //$this->secret = $secret; //TODO 生成一个伪key
     $this->access_token = new cache($appid.__CLASS__, $secret, 7200, function() use ($appid, $secret){
-      return request::url(token::HOST.'/cgi-bin/token')
+      return token::check(request::url(token::HOST.'/cgi-bin/token')
         ->fetch(['grant_type'=>'client_credential','appid'=>$appid,'secret'=>$secret])
-        ->json()->access_token??null;
+        ->json())->access_token;
     });
   }
 
