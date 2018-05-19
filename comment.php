@@ -15,11 +15,11 @@ class comment{
    * @param int $index=0 多图文时，用来指定第几篇图文，从0开始，不带默认操作该msg_data_id的第一篇图文
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
-  function open(int $msg_data_id, int $index=0):bool{
-    return $msg_data_id&&token::check(request::url(token::HOST.'/cgi-bin/comment/open')
+  function open(int $msg_data_id, int $idx=0):bool{
+    return !token::check(request::url(token::HOST.'/cgi-bin/comment/open')
       ->query(['access_token'=>(string)$this->token])
-      ->POST(json_encode(['msg_data_id'=>$msg_data_id,'index'=>$index]))
-      -json());
+      ->POST(json_encode(['msg_data_id'=>$msg_data_id,'index'=>$idx]))
+      -json())->errcode;
   }
 
 
@@ -30,10 +30,10 @@ class comment{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
   function close(int $msg_data_id, int $index=0):bool{
-    return $msg_data_id&&token::check(request::url(token::HOST.'/cgi-bin/comment/close')
+    return !token::check(request::url(token::HOST.'/cgi-bin/comment/close')
       ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['msg_data_id'=>$msg_data_id,'index'=>$index]))
-      -json());
+      -json())->errcode;
   }
 
 
@@ -46,7 +46,7 @@ class comment{
    * @param int $type 0全部 1普通评论 2精选评论
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
-  function list(int $msg_data_id, int $begin, int $count, int $type, int $index=0):\stdClass{
+  function list(int $msg_data_id, int $begin, int $count=50, int $type=0, int $index=0):\stdClass{
     return token::check(request::url(token::HOST.'/cgi-bin/comment/list')
       ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['msg_data_id'=>$msg_data_id,'index'=>$index]))
@@ -59,10 +59,10 @@ class comment{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
   function markelect(int $msg_data_id, int $index, int $user_comment_id):bool{
-    return $msg_data_id&&token::check(request::url(token::HOST.'/cgi-bin/comment/markelect')
+    return !token::check(request::url(token::HOST.'/cgi-bin/comment/markelect')
       ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['msg_data_id'=>$msg_data_id,'index'=>$index,'user_comment_id'=>$user_comment_id]))
-      -json());
+      -json())->errcode;
   }
 
 
@@ -71,10 +71,10 @@ class comment{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
   function unmarkelect(int $msg_data_id, int $index, int $user_comment_id):bool{
-    return $msg_data_id&&token::check(request::url(token::HOST.'/cgi-bin/comment/unmarkelect')
+    return !token::check(request::url(token::HOST.'/cgi-bin/comment/unmarkelect')
       ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['msg_data_id'=>$msg_data_id,'index'=>$index,'user_comment_id'=>$user_comment_id]))
-      -json());
+      -json())->errcode;
   }
 
 
@@ -83,10 +83,10 @@ class comment{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
   function delete(int $msg_data_id, int $index, int $user_comment_id):bool{
-    return $msg_data_id&&token::check(request::url(token::HOST.'/cgi-bin/comment/delete')
+    return !token::check(request::url(token::HOST.'/cgi-bin/comment/delete')
       ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['msg_data_id'=>$msg_data_id,'index'=>$index,'user_comment_id'=>$user_comment_id]))
-      -json());
+      -json())->errcode;
   }
 
 
@@ -95,10 +95,10 @@ class comment{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
   function reply_add(int $msg_data_id, int $user_comment_id, string $content, int $index=0):bool{
-    return $msg_data_id&&token::check(request::url(token::HOST.'/cgi-bin/comment/reply/add')
+    return !token::check(request::url(token::HOST.'/cgi-bin/comment/reply/add')
       ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['msg_data_id'=>$msg_data_id,'index'=>$index,'user_comment_id'=>$user_comment_id,'content'=>$content]))
-      -json());
+      -json())->errcode;
   }
 
 
@@ -107,10 +107,10 @@ class comment{
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1494572718_WzHIY
    */
   function reply_delete(int $msg_data_id, int $user_comment_id, int $index=0):bool{
-    return $msg_data_id&&token::check(request::url(token::HOST.'/cgi-bin/comment/reply/delete')
+    return !token::check(request::url(token::HOST.'/cgi-bin/comment/reply/delete')
       ->query(['access_token'=>(string)$this->token])
       ->POST(json_encode(['msg_data_id'=>$msg_data_id,'index'=>$index,'user_comment_id'=>$user_comment_id]))
-      -json());
+      -json())->errcode;
   }
 
 }

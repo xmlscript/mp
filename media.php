@@ -9,39 +9,39 @@ class media{
   }
 
   /**
-   * 新增临时素材
+   * 新增临时素材，三天后media_id失效
+   * 应当从$_FILES变量里面推导type
    * @param string $type image, voice, video, thumb
    */
-  function upload(string $type):\stdClass{
+  function upload(string $type):string{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738726
     return token::check(request::url(token::HOST.'/cgi-bin/media/upload')
       ->query(['access_token'=>(string)$this->token,'type'=>$type])
-      ->header('Content-Type','application/json;charset=UTF-8')
       ->upload()//TODO 
-      ->json());
+      ->json())->media_id;
   }
 
 
   /**
    * 获取临时素材
+   * 视频类型返回json，其他类型则直接得到文件
    */
-  function get(string $media_id):\stdClass{
+  function get(string $media_id):string{
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738727
-    return token::check(request::url(token::HOST.'/cgi-bin/media/get')
-      ->fetch(['access_token'=>(string)$this->token,'type'=>$type])
-      ->json());
+    return (string)request::url(token::HOST.'/cgi-bin/media/get')
+      ->query(['access_token'=>(string)$this->token,'media_id'=>$media_id]);
   }
 
 
   /**
    * 获取永久素材
+   * 视频和news类型返回json，其他类型则直接得到文件
    */
-  function get_material(string $media_id):\stdClass{
+  function get_material(string $media_id){
     https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738730
-    return token::check(request::url(token::HOST.'/cgi-bin/material/get_material')
+    return request::url(token::HOST.'/cgi-bin/material/get_material')
       ->query(['access_token'=>(string)$this->token])
-      ->POST(json_encode(['media_id'=>$media_id]))
-      ->json());
+      ->POST(json_encode(['media_id'=>$media_id]));
   }
 
 
@@ -95,7 +95,7 @@ class media{
 
 
   /**
-   * 新增永久素材
+   * 新增永久素材里的news，因为news比较特殊
    * @param string title
    * @param string thumb_media_id 必须填永久素材图片的media_id
    * @param string author
@@ -133,6 +133,8 @@ class media{
 
 
   /**
+   * 上传其他非news类型的永久素材
+   * @todo 应该让客户端自己直接与微信官服直接通信，而不是由库代理
    * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738729
    */
   function add_material(string $file):string{
@@ -153,7 +155,8 @@ class media{
     return token::check(request::url(token::HOST.'/cgi-bin/material/add_material')
       ->query(['access_token'=>(string)$this->token,'type'=>$type])
       ->header('Content-Type','application/json;charset=UTF-8')
-      ->upload()//TODO 
+      ->upload()//FIXME 
+      ->POST(json_encode(['title'=>'视频标题','introduction'=>'视频描述'))//TODO 视频素材需要额外信息
       ->json())->url;
   }
 
