@@ -8,6 +8,16 @@ class tpl{
     $this->token = $token;
   }
 
+
+  /**
+   * @see https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1433751277
+   */
+  function get_all_private_template():array{
+    return token::check(request::url(token::HOST.'/cgi-bin/template/get_all_private_template')
+      ->fetch(['access_token'=>(string)$this->token])
+      ->json())->template_list;
+  }
+
   /**
    * 获取可用的消息模板
    * @todo 获取模板，不能和发送模板消息合并吗？？？
